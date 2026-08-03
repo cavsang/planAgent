@@ -1,2 +1,0 @@
-# planAgent
-for my son.
