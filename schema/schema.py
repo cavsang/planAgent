@@ -7,6 +7,6 @@ class AgentState(BaseModel):
     user_input:str
 
 
-class StudentState(BaseModel):
+class StudentState(BaseModel): 
     """학생 정보를 담은 state"""
     
