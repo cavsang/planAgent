@@ -13,6 +13,7 @@ from datetime import date
 
 from db.models import Curriculum, Student, Subject, Term
 from db.session import get_db
+from sqlalchemy import select, and_, or_, not_
 
 
 def create_example_data():
@@ -71,6 +72,16 @@ def query_example(student_id):
             print(f"  - {c.step}: {c.step_desc}")
 
 
+
+def query_name_example(name:str):
+    with get_db() as db:
+        stmt = select(Student).where(Student.name == name)
+        print(stmt) #쿼리가 나옴,(실행계획)
+        student = db.execute(stmt).scalar_one_or_none()
+        print(student.name if student else "없음")
+        
+
+
 if __name__ == "__main__":
-    new_student_id = create_example_data()
-    query_example(new_student_id)
+    #new_student_id = create_example_data()
+    query_name_example("이하랑")
