@@ -111,6 +111,7 @@ class ProblemGenerationState(BaseModel):
     """문제 생성 파이프라인 실행 중 흐르는 state.
     student / curriculum 등은 DB에서 조회해온 결과를 그대로 담는다.
     """
+    user_input: str = Field(description="사용자 입력 (예: '이하랑')")
     student: StudentState
     curriculum: CurriculumState
     weaknesses: list[WeaknessState] = Field(default_factory=list, description="이 학생의 기존 약점 목록 (문제 난이도/유형 결정에 활용)")
@@ -121,10 +122,5 @@ class ProblemGenerationState(BaseModel):
     error: Optional[str] = Field(default=None, description="파이프라인 중 발생한 에러 메시지")
 
 
-
-class AgentState(BaseModel):
-    """기본적으로 사용하는 전역 state"""
-    user_input:str = Field(description="사용자 입력")
-    student: Optional[StudentState] = Field(description="학생 정보")
 
 

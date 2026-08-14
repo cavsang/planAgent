@@ -1,11 +1,12 @@
-from schema.schema import StudentState
+from schema.schema import ProblemGenerationState, StudentState
 
 from model.llm import get_llm
-from schema.schema import AgentState
 
-def loadStudent_node(state:AgentState) -> dict:
+def loadStudent_node(state:ProblemGenerationState) -> dict:
     """학생 정보를 조회한다."""
-    input = state['user_input']
+    name = state['user_input']
+
+    
 
     #TODO : DB검색
 
