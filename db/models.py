@@ -95,9 +95,9 @@ class Term(Base, TimestampMixin):
 
 class Curriculum(Base, TimestampMixin):
     __tablename__ = "curriculum"
-    __table_args__ = (
-        UniqueConstraint("subject_id", "term_id", "step", name="uq_curriculum_subject_term_step"),
-    )
+    
+    # 기존 'step' 컬럼이 사라졌으므로 관련 UniqueConstraint도 제거되었습니다.
+    # 만약 새로운 고유키 조건(예: code 등)이 있다면 __table_args__ 에 추가해야 합니다.
 
     curriculum_id: Mapped[UUID] = mapped_column(PGUUID(as_uuid=True), primary_key=True, default=uuid4)
     subject_id: Mapped[UUID] = mapped_column(
@@ -106,9 +106,16 @@ class Curriculum(Base, TimestampMixin):
     term_id: Mapped[UUID] = mapped_column(
         PGUUID(as_uuid=True), ForeignKey("term.term_id", ondelete="RESTRICT"), nullable=False
     )
-    step: Mapped[str] = mapped_column(String(200), nullable=False)
-    step_desc: Mapped[str] = mapped_column(Text, nullable=False)
+    
+    # 새로 추가/변경된 컬럼들
+    code: Mapped[str] = mapped_column(Text, nullable=False)
+    domain: Mapped[str | None] = mapped_column(Text, nullable=True)
+    unit: Mapped[str | None] = mapped_column(Text, nullable=True)
+    content: Mapped[str | None] = mapped_column(Text, nullable=True)
+    explanation: Mapped[str | None] = mapped_column(Text, nullable=True)
+    allowed_terms: Mapped[str | None] = mapped_column(Text, nullable=True)
 
+    # 기존 관계성(Relationship) 유지
     subject: Mapped["Subject"] = relationship(back_populates="curricula")
     term: Mapped["Term"] = relationship(back_populates="curricula")
     problems: Mapped[list["Problem"]] = relationship(back_populates="curriculum")

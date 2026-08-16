@@ -1,11 +1,12 @@
 
-from schema.schema import StudentState
+from schema.schema import ProblemGenerationState, StudentState
 
 
-def curriculum_node(state:StudentState) -> dict:
+def curriculum_node(state:ProblemGenerationState) -> dict:
     """학년/학기/진도를 조회한다."""
-    input = state['user_input']
+    student: StudentState = state.student
 
-    #TODO : DB검색
+    #커리큘럼 정보를 가져온다.
+    
 
     return{}
