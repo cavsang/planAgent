@@ -14,8 +14,8 @@ def utc_now() -> datetime:
 
 class CommonState(BaseModel):
     """공통 감사(audit) 필드. 모든 DB 저장용 모델이 상속한다."""
-    created_at: datetime = Field(default_factory=utc_now(), description="생성일시")
-    updated_at: datetime = Field(default_factory=utc_now(), description="수정일시")
+    created_at: datetime = Field(default_factory=utc_now, description="생성일시")
+    updated_at: datetime = Field(default_factory=utc_now, description="수정일시")
     deleted_at: Optional[datetime] = Field(default=None, description="삭제일시 (soft delete)")
     created_by: Optional[str] = Field(default=None, description="생성자 (system/teacher/admin 등)")
     updated_by: Optional[str] = Field(default=None, description="수정자")
@@ -68,9 +68,9 @@ class CurriculumState(CommonState):
     code:str = Field(description="진도 코드 (예: 4수01-09, 9수04-01)")
     domain:str = Field(description="진도 영역 (예: 수와 연산, 함수, 문법)")
     unit:str = Field(description="진도 단원 (예: 분수, 세 자리 수 범위의 곱셈)")
-    content:str = Field(description="성취 기준 본문(예.양의 등분할을 통하여 분수의 필요성을 인식하고, 분수를 이해하고 읽고 쓸 수 있다.)")
-    explanation:str = Field(description="해설(예.1보다 작은 양을 나타내는 경우를 통하여 분수의 필요성이나 그 표현의 편리함을 인식하게 할 수 있다. 양의 등분할을 통하여 분수를 도입할 때 부분과 전체를 파악하게 하고, '분모', '분자'를 사용한다.)")
-    allowed_terms:str = Field(description="학년·영역에서 사용 가능한 수학 용어 및 기호 목록(쉼표 구분). 문제 생성 시 이 목록에 없는 상위 학년 용어(예: 약수, 배수, 기약분수 등)를 사용하지 않도록 제한하는 데 사용됨.")
+    content:str | None = Field(default=None, description="성취 기준 본문(예.양의 등분할을 통하여 분수의 필요성을 인식하고, 분수를 이해하고 읽고 쓸 수 있다.)")
+    explanation:str | None = Field(default=None, description="해설(예.1보다 작은 양을 나타내는 경우를 통하여 분수의 필요성이나 그 표현의 편리함을 인식하게 할 수 있다. 양의 등분할을 통하여 분수를 도입할 때 부분과 전체를 파악하게 하고, '분모', '분자'를 사용한다.)")
+    allowed_terms:str | None = Field(default=None, description="학년·영역에서 사용 가능한 수학 용어 및 기호 목록(쉼표 구분). 문제 생성 시 이 목록에 없는 상위 학년 용어(예: 약수, 배수, 기약분수 등)를 사용하지 않도록 제한하는 데 사용됨.")
 
 
 class ProblemState(CommonState):
@@ -116,12 +116,14 @@ class ProblemGenerationState(BaseModel):
     student / curriculum 등은 DB에서 조회해온 결과를 그대로 담는다.
     """
     user_input: str = Field(description="사용자 입력 (예: '이하랑')")
+    code:str = Field(description="사용자 입력에 해당하는 진도 코드 (예: 4수 (4학년 수학이라는 뜻), 9수 (9학년(중3) 수학이라는 뜻))")
     student: StudentState | None = Field(default=None, description="조회된 학생 정보")
     subject: SubjectState | None = Field(default=None, description="조회된 과목 정보")
     term: TermState | None = Field(default=None, description="조회된 학년/학기 정보")
-    curriculum: CurriculumState | None = Field(default=None, description="조회된 진도 정보")
+    curriculum: list[CurriculumState] | None = Field(default_factory=list, description="조회된 진도 정보")
     weaknesses: list[WeaknessState] | None= Field(default_factory=list, description="이 학생의 기존 약점 목록 (문제 난이도/유형 결정에 활용)")
 
+    history_problems: list[ProblemState] | None = Field(default_factory=list, description="이 학생의 기존 문제 풀이 이력 (문제 난이도/유형 결정에 활용)")
     generated_problem: Optional[ProblemState] = Field(default=None, description="LLM이 생성한 문제 결과")
     notification: Optional[NotificationState] = Field(default=None, description="발송 결과")
 
