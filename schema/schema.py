@@ -1,5 +1,5 @@
 from datetime import date, datetime, timezone
-from typing import Literal, Optional
+from typing import List, Literal, Optional
 from uuid import UUID, uuid4
 
 from pydantic import BaseModel, Field
@@ -73,18 +73,26 @@ class CurriculumState(CommonState):
     allowed_terms:str | None = Field(default=None, description="학년·영역에서 사용 가능한 수학 용어 및 기호 목록(쉼표 구분). 문제 생성 시 이 목록에 없는 상위 학년 용어(예: 약수, 배수, 기약분수 등)를 사용하지 않도록 제한하는 데 사용됨.")
 
 
-class ProblemState(CommonState):
+class BaseProblemState(CommonState):
+    """문제 생성기(LLM)에게 전달할 문제 설계 명세 State"""
+    problem: str = Field(description="LLM이 생성한 문제")
+    correct_answer: str = Field(description="LLM이 생성한 정답")
+    problem_hint: str = Field(description="LLM이 생성한 문제의 풀이 과정에대한 가이드")
+    problem_key_concepts: Optional[str] = Field(..., description="LLM이 생성한 문제의 핵심 개념 키워드 (문제의 풀때 필요한 핵심 개념을 최대 10개 이하 정도 쉼표로 구분하여 작성)")
+
+class ProblemState(BaseProblemState):
     """생성된 문제 및 채점 결과 테이블 (problem)
     학생/과목/진도 정보는 FK로만 연결한다.
     """
     problem_id: UUID = Field(default_factory=uuid4, description="문제 PK")
     student_id: UUID = Field(description="FK -> student.student_id")
     curriculum_id: UUID = Field(description="FK -> curriculum.curriculum_id")
-    problem: str = Field(description="LLM이 생성한 문제")
+    
     answer: Optional[str] = Field(default=None, description="학생이 제출한 답변")
     is_correct: Optional[bool] = Field(default=None, description="정답 여부 (채점 전에는 None)")
     feedback: Optional[str] = Field(default=None, description="LLM 피드백")
-    llm_model: Optional[str] = Field(default=None, description="문제 생성에 사용한 모델명")
+    
+
 
 
 class WeaknessState(CommonState):
@@ -104,6 +112,30 @@ class NotificationState(CommonState):
     status: Literal["pending", "sent", "failed", "opened"] = Field(default="pending", description="발송 상태")
     sent_at: Optional[datetime] = Field(default=None, description="발송 완료 시각")
     error_message: Optional[str] = Field(default=None, description="실패 사유")
+
+
+class QuestionSpecState(BaseModel):
+    """2단계 LLM(문제 생성기)에게 전달할 문항 설계 명세 State"""
+
+    difficulty_level: Literal["매우쉬움", "쉬움", "보통", "어려움", "매우어려움", "최상"] = Field(..., description="난이도등급")
+    standard_summary: str = Field(..., description="성취기준_요약 - 입력받은 성취기준을 한 문장으로 재정리")
+    number_range: str = Field(..., description="수_범위 - 예: 0~100, 진분수(분모 10 이하) 등 구체적 범위")
+    operation_steps: int = Field(..., ge=1, le=5, description="연산_단계수 - 1~5 사이의 정수")
+    operation_types: List[str] = Field(default_factory=list, description="연산_종류 - 예: 덧셈, 뺄셈, 곱셈, 나눗셈, 분수화 등")
+    is_word_problem: bool = Field(..., description="문장제_여부")
+    condition_count: int = Field(..., ge=0, description="조건_개수")
+    condition_details: List[str] = Field(default_factory=list, description="조건_상세 - 조건 설명 리스트")
+    trap_elements: List[str] = Field(default_factory=list, description="함정_요소 - 예: 불필요 정보 삽입 등, 없으면 빈 배열")
+    bloom_level: Literal["기억", "이해", "적용", "분석", "평가"] = Field(..., description="블룸_인지수준")
+    allowed_terms: List[str] = Field(default_factory=list, description="허용_용어 - 해당 학년/진도에서 사용 가능한 수학 용어 목록")
+    forbidden_terms_check: List[str] = Field(default_factory=list, description="금지_용어_확인 - 체크한 금지 용어 목록과 각각 미포함 확인(true)")
+    weakness_reflection: Optional[str] = Field(default=None, description="약점_반영_내용 - 약점 키워드를 어떻게 반영했는지, 없으면 null")
+    history_dedup_note: str = Field(..., description="이력_중복회피_메모 - 과거 이력과 어떻게 차별화했는지")
+    estimated_solving_time_sec: int = Field(..., ge=0, description="예상_풀이시간_초")
+    question_writing_guide: str = Field(..., description="출제_가이드_한줄 - 실제 문제 작성자(2단계 LLM)에게 줄 한 줄 지침")
+
+    subject: Literal["국어", "수학", "영어", "사회", "과학"] = Field(..., description="과목명 (예: 국어, 수학, 영어, 사회, 과학)")
+    school_level: Literal["초등학교", "중학교", "고등학교"] = Field(..., description="학년 구분 (예: 초등학교, 중학교, 고등학교)")
 
 
 # ---------------------------------------------------------------------------
