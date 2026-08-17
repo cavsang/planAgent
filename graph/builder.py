@@ -26,6 +26,6 @@ builder.add_edge('weakness', 'select_concept')
 builder.add_edge('select_concept', END)
 
 executable_builder = builder.compile()
-result= executable_builder.invoke({"user_input": "이하랑", "code": "4수01-14"})
+result= executable_builder.invoke({"user_input": "이하랑", "code": "4수01-14", "difficulty": "보통"})
 #print(json.dumps(result, indent=2, ensure_ascii=False))
 

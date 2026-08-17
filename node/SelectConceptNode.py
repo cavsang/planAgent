@@ -58,7 +58,7 @@ def selectconcept_node(state: ProblemGenerationState) -> dict:
         {curriculum_str}
 
         [난이도]
-        최상,상,중,하 중 최상 으로 문제를 출제해야한다.
+        [최상,매우어려움, 어려움, 보통, 쉽게, 매우쉽게] 중에서 사용자가 선택한 난이도: {difficulty}
 
         위 정보를 바탕으로, [출제 우선순위 규칙] 1→2→3 순서로 판단하여 가장 적절한 curriculum 항목 1개를 선택하고, 그에 맞는 문제를 System Prompt의 [출력 형식]에 맞춰 생성해주세요.
     """.format(
@@ -69,6 +69,7 @@ def selectconcept_node(state: ProblemGenerationState) -> dict:
         weaknesses_str=format_weaknesses(state.weaknesses),
         history_problems_str=format_history_problems(state.history_problems),
         curriculum_str=format_curriculum_list(state.curriculum),
+        difficulty=state.difficulty
     )
 
     messages=[

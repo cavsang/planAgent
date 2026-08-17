@@ -117,6 +117,8 @@ class ProblemGenerationState(BaseModel):
     """
     user_input: str = Field(description="사용자 입력 (예: '이하랑')")
     code:str = Field(description="사용자 입력에 해당하는 진도 코드 (예: 4수 (4학년 수학이라는 뜻), 9수 (9학년(중3) 수학이라는 뜻))")
+    difficulty: Optional[str] = Field(default="보통", description="사용자가 선택한 난이도 (예: 최상,매우어려움, 어려움, 보통, 쉽게, 매우쉽게)")
+
     student: StudentState | None = Field(default=None, description="조회된 학생 정보")
     subject: SubjectState | None = Field(default=None, description="조회된 과목 정보")
     term: TermState | None = Field(default=None, description="조회된 학년/학기 정보")
