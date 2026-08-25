@@ -11,7 +11,7 @@ from dotenv import load_dotenv
 load_dotenv()
 # API 키 설정
 if not os.getenv("OPENAI_API_KEY"):
-    os.environ["OPENAI_API_KEY"] = "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"
+    os.environ["OPENAI_API_KEY"] = "password"
 
 
 def get_llm() ->  Optional[BaseChatModel]:
