@@ -1,4 +1,3 @@
 
-def router(TypedDict){
-
-}
+def router(TypedDict):
+    pass
