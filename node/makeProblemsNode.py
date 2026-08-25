@@ -30,14 +30,18 @@ def makeproblems_node(state: QuestionSpecState) -> dict:
         HumanMessage(content=human_prompt)
     ]
 
-    print(system_prompt)
-    print("==========================================")
-    print(human_prompt)
+    #print(system_prompt)
+    #print("==========================================")
+    #print(human_prompt)
+    #print("==========================================")
 
     llm = get_llm()
     structured_llm = llm.with_structured_output(BaseProblemState)
     result = structured_llm.invoke(messages)
-    print(result)
-    return {}
+    #print(result)
+    return {
+        "baseProblemState": result,
+        "questionSpecState" : state
+    }
 
 

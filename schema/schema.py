@@ -1,5 +1,5 @@
 from datetime import date, datetime, timezone
-from typing import List, Literal, Optional
+from typing import List, Literal, NotRequired, Optional
 from uuid import UUID, uuid4
 
 from pydantic import BaseModel, Field
@@ -91,7 +91,9 @@ class ProblemState(BaseProblemState):
     answer: Optional[str] = Field(default=None, description="학생이 제출한 답변")
     is_correct: Optional[bool] = Field(default=None, description="정답 여부 (채점 전에는 None)")
     feedback: Optional[str] = Field(default=None, description="LLM 피드백")
-    
+
+
+
 
 
 
@@ -114,7 +116,13 @@ class NotificationState(CommonState):
     error_message: Optional[str] = Field(default=None, description="실패 사유")
 
 
-class QuestionSpecState(BaseModel):
+class CheckProblemState(BaseModel):
+    """QuestionSpecState의 항목을 비교해 컨셉대로 baseProblemState의 문제를 생성했는지 확인한다."""
+    is_confirm: Optional[bool] = Field(default=None, description="문제 생성후 confirm에서 문제가 컨셉과 적합한지 여부 ")
+    feedback: Optional[str] = Field(default=None, description="LLM 피드백")
+
+
+class QuestionSpecState(CommonState):
     """2단계 LLM(문제 생성기)에게 전달할 문항 설계 명세 State"""
 
     difficulty_level: Literal["매우쉬움", "쉬움", "보통", "어려움", "매우어려움", "최상"] = Field(..., description="난이도등급")
@@ -136,6 +144,15 @@ class QuestionSpecState(BaseModel):
 
     subject: Literal["국어", "수학", "영어", "사회", "과학"] = Field(..., description="과목명 (예: 국어, 수학, 영어, 사회, 과학)")
     school_level: Literal["초등학교", "중학교", "고등학교"] = Field(..., description="학년 구분 (예: 초등학교, 중학교, 고등학교)")
+    retry_cnt: int = Field(description="문제가 적합하지않아서 실패했을시 문제를 다시 만든 시도횟수", default=0)
+
+
+
+class ConfirmProblemState(CommonState):
+    "QuestionSpecState과 BaseProblemState를 합쳐는 state"
+    baseProblemState : BaseProblemState  = Field(description="문제 생성기에서 생성한 문제가 들어있는 객체")
+    questionSpecState: QuestionSpecState = Field(description="LLM(문제 생성기)에게 전달할 문항 설계 명세 State")
+
 
 
 # ---------------------------------------------------------------------------
