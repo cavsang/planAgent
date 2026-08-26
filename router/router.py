@@ -3,7 +3,7 @@ from schema.schema import ProblemGenerationState
 
 
 def router(state: ProblemGenerationState):
-    print("router : ", state)
+    #print("router : ", state)
     if state.retry_cnt > 3:
         return "END"
 
