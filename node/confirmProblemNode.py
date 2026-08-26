@@ -80,11 +80,16 @@ def confirmProblemNode(confirmState:ConfirmProblemState) -> dict:
     structed_llm = llm.with_structured_output(CheckProblemState)
     result = structed_llm.invoke(messages)
 
-    print(result)
+    #print(result)
     if not result.is_confirm:
-        return {"retry_cnt": spec.retry_cnt + 1}
+        return {
+                "retry_cnt": spec.retry_cnt + 1,
+                "check_problemState": result
+        }
     else:
-        return result.model_dump()
+        return {
+                "check_problemState": result
+        }
     
 
 

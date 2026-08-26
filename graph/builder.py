@@ -7,6 +7,7 @@ from node.SelectConceptNode import selectconcept_node
 from node.WeaknessNode import weakness_node
 from node.confirmProblemNode import confirmProblemNode
 from node.makeProblemsNode import makeproblems_node
+from router.router import router
 from schema.schema import ProblemGenerationState
 from node.LoadStudentNode import loadStudent_node
 
@@ -29,7 +30,12 @@ builder.add_edge('history', 'weakness')
 builder.add_edge('weakness', 'select_concept')
 builder.add_edge('select_concept', 'make_problems')
 builder.add_edge('make_problems', 'confirm_problems')
-builder.add_edge('confirm_problems', END)
+builder.add_conditional_edges('confirm_problems', router,{
+    "makeProblems" : "make_problems",
+    "END" : END
+})
+
+
 
 
 

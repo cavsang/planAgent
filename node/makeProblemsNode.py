@@ -11,6 +11,8 @@ from utils.utils import build_makeproblems_system_prompt
 def makeproblems_node(state: QuestionSpecState) -> dict:
     """문제 생성기(LLM)에게 문제를 생성하도록 요청한다."""
 
+    #print("makeproblems_node 들어왔을때의 값 : ", state)
+
     school_level = state.school_level  # 예: "초등학교" | "중학교" | "고등학교"
     subject = state.subject            # 예: "국어" | "수학" | "영어" | "사회" | "과학"
     # ※ QuestionSpecState의 실제 필드명이 다르다면 아래 두 줄만 맞춰주세요.
@@ -38,7 +40,7 @@ def makeproblems_node(state: QuestionSpecState) -> dict:
     llm = get_llm()
     structured_llm = llm.with_structured_output(BaseProblemState)
     result = structured_llm.invoke(messages)
-    #print(result)
+    #print("makeproblems_node 에서의 result 값 : ", result)
     return {
         "baseProblemState": result,
         "questionSpecState" : state

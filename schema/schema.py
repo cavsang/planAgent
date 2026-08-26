@@ -119,7 +119,7 @@ class NotificationState(CommonState):
 class CheckProblemState(BaseModel):
     """QuestionSpecState의 항목을 비교해 컨셉대로 baseProblemState의 문제를 생성했는지 확인한다."""
     is_confirm: Optional[bool] = Field(default=None, description="문제 생성후 confirm에서 문제가 컨셉과 적합한지 여부 ")
-    feedback: Optional[str] = Field(default=None, description="LLM 피드백")
+    confirm_feedback: str | None = Field(default=None, description="is_confirm이 False일때만 이유를 적음")
 
 
 class QuestionSpecState(CommonState):
@@ -145,6 +145,7 @@ class QuestionSpecState(CommonState):
     subject: Literal["국어", "수학", "영어", "사회", "과학"] = Field(..., description="과목명 (예: 국어, 수학, 영어, 사회, 과학)")
     school_level: Literal["초등학교", "중학교", "고등학교"] = Field(..., description="학년 구분 (예: 초등학교, 중학교, 고등학교)")
     retry_cnt: int = Field(description="문제가 적합하지않아서 실패했을시 문제를 다시 만든 시도횟수", default=0)
+    check_problemState : CheckProblemState | None = Field(description="CheckProblemState 의 객채")
 
 
 
