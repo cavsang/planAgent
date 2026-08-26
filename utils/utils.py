@@ -1,4 +1,4 @@
-from schema.schema import CurriculumState, ProblemState, WeaknessState
+from schema.schema import BaseProblemState, CurriculumState, WeaknessState
 
 
 def format_curriculum_list(curriculum_list: list[CurriculumState]) -> str:
@@ -31,7 +31,7 @@ def format_weaknesses(weaknesses: list[WeaknessState] | None) -> str:
     return "\n".join(blocks)
 
 
-def format_history_problems(history: list[ProblemState] | None) -> str:
+def format_history_problems(history: list[BaseProblemState] | None) -> str:
     if not history:
         return "없음"
     

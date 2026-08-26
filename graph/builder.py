@@ -6,6 +6,7 @@ from node.LoadHistoryNode import loadhistory_node
 from node.SelectConceptNode import selectconcept_node
 from node.WeaknessNode import weakness_node
 from node.confirmProblemNode import confirmProblemNode
+from node.insertDBNode import insertDBNode
 from node.makeProblemsNode import makeproblems_node
 from router.router import router
 from schema.schema import ProblemGenerationState
@@ -22,6 +23,7 @@ builder.add_node('weakness', weakness_node)
 builder.add_node('select_concept', selectconcept_node)  
 builder.add_node('make_problems', makeproblems_node)  # 문제 생성기(LLM)에게 문제를 생성하도록 요청
 builder.add_node('confirm_problems', confirmProblemNode)
+builder.add_node('insert_db', insertDBNode)
 
 builder.add_edge(START, 'student')
 builder.add_edge('student', 'curriculum')
@@ -31,9 +33,13 @@ builder.add_edge('weakness', 'select_concept')
 builder.add_edge('select_concept', 'make_problems')
 builder.add_edge('make_problems', 'confirm_problems')
 builder.add_conditional_edges('confirm_problems', router,{
-    "makeProblems" : "make_problems",
-    "END" : END
+    "makeProblems"  : "make_problems",
+    "NEXT"          : "insert_db",
+    "END"           : END
 })
+
+builder.add_edge('insert_db', END)
+
 
 
 

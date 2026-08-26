@@ -43,7 +43,7 @@ def confirmProblemNode(confirmState:ConfirmProblemState) -> dict:
 
         위 실제 문제가 설계 명세의 의도대로 정확히 생성되었는지 검증하세요.
         """.format(
-            subject=spec.subject,
+            subject=spec.subject_str,
             school_level=spec.school_level,
             difficulty_level=spec.difficulty_level,
             standard_summary=spec.standard_summary,
@@ -88,7 +88,8 @@ def confirmProblemNode(confirmState:ConfirmProblemState) -> dict:
         }
     else:
         return {
-                "check_problemState": result
+                "check_problemState": result,
+                "generated_problem" : base.model_copy()
         }
     
 
