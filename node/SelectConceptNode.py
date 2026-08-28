@@ -63,7 +63,7 @@ def selectconcept_node(state: ProblemGenerationState) -> dict:
     llm = get_llm()
     structured_llm = llm.with_structured_output(QuestionSpecState)
     results = structured_llm.invoke(messages)
-    print("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
-    print(results)
+    #print("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
+    #print(results)
     return results.model_dump()
 

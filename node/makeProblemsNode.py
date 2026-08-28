@@ -37,7 +37,7 @@ def makeproblems_node(state: QuestionSpecState) -> dict:
     llm = get_llm()
     structured_llm = llm.with_structured_output(BaseProblemState)
     result = structured_llm.invoke(messages)
-    print(result)
-    return {}
+    #print(result)
+    return result.model_dump()
 
 
