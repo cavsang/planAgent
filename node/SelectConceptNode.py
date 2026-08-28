@@ -11,6 +11,8 @@ from utils.utils import build_system_prompt, format_curriculum_list, format_hist
 def selectconcept_node(state: ProblemGenerationState) -> dict:
     """문제 생성을 구체화 한다."""
 
+    #print("selectconcept_node의 들어왔을때의 값 : ", state)
+
     student = state.student
     curriculum = state.curriculum
     weaknesses = state.weaknesses

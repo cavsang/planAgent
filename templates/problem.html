@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{{ title | default('오늘의 수학 문제') }}</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css">
+<link rel="stylesheet" href="/static/css/problem.css">
+</head>
+<body>
+<div class="bg-grid"></div>
+
+<div data-problem-app data-pid="{{ pid }}" data-preview="false">
+
+  <header class="top-bar">
+    <div class="top-bar-inner">
+      <p class="eyebrow">오늘의 학습지</p>
+      <h1 class="page-title">{{ title | default('오늘의 수학 문제') }}</h1>
+      <p class="meta"><span id="answered-count">0</span>/{{ problems|length }} 작성됨{% if subtitle %} · {{ subtitle }}{% endif %}</p>
+      <div class="rail" id="rail">
+        {% for problem in problems %}
+        <span class="rail-chip" data-index="{{ loop.index0 }}">{{ '%02d'|format(loop.index) }}</span>
+        {% endfor %}
+      </div>
+    </div>
+  </header>
+
+  <main class="sheet">
+    {% for problem in problems %}
+    <section class="problem-card" style="--delay:{{ loop.index0 }};">
+      <div class="tab">{{ '%02d'|format(loop.index) }}</div>
+      <span class="problem-label">문제 {{ loop.index }}</span>
+      <p class="problem-text">{{ problem.text }}</p>
+      <label class="answer-label" for="answer-{{ loop.index0 }}">
+        <span>내 풀이</span>
+      </label>
+      <textarea
+        class="answer-box"
+        id="answer-{{ loop.index0 }}"
+        data-index="{{ loop.index0 }}"
+        placeholder="여기에 풀이 과정과 답을 적어보세요"
+      ></textarea>
+    </section>
+    {% endfor %}
+  </main>
+
+  <footer class="action-bar">
+    <div class="action-inner">
+      <span class="status-text" id="status-text"><strong>0</strong>/{{ problems|length }} 작성됨</span>
+      <button class="submit-btn" id="submit-btn">답안 제출하기</button>
+    </div>
+  </footer>
+
+</div>
+
+<script src="/static/js/problem.js" defer></script>
+</body>
+</html>

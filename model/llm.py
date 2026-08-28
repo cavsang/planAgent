@@ -2,8 +2,13 @@
 from typing import Optional
 
 from langchain.chat_models import BaseChatModel
-from langchain_ollama import ChatOllama
+#from langchain_ollama import ChatOllama
+from langchain_openai import ChatOpenAI
 
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 def get_llm() ->  Optional[BaseChatModel]:
     """
@@ -11,10 +16,7 @@ def get_llm() ->  Optional[BaseChatModel]:
     Returns:
         BaseChatModel: Ollama 기반의 Chat 모델 인스턴스
     """
-    return ChatOllama(
-        model="Qwen3:14b",
-        #model="Gemma4:26b",
-        base_url="http://localhost:11434",
-        temperature=0.5,
-    )
-    return None
+    #model="Gemma4:26b"
+    #return ChatOllama(model="Qwen3:14b",base_url="http://localhost:11434",temperature=0.5,)
+    return ChatOpenAI(model="gpt-5-mini", temperature=0)
+    #return None

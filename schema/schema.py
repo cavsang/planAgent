@@ -1,5 +1,5 @@
 from datetime import date, datetime, timezone
-from typing import List, Literal, Optional
+from typing import List, Literal, NotRequired, Optional
 from uuid import UUID, uuid4
 
 from pydantic import BaseModel, Field
@@ -80,19 +80,6 @@ class BaseProblemState(CommonState):
     problem_hint: str = Field(description="LLM이 생성한 문제의 풀이 과정에대한 가이드")
     problem_key_concepts: Optional[str] = Field(..., description="LLM이 생성한 문제의 핵심 개념 키워드 (문제의 풀때 필요한 핵심 개념을 최대 10개 이하 정도 쉼표로 구분하여 작성)")
 
-class ProblemState(BaseProblemState):
-    """생성된 문제 및 채점 결과 테이블 (problem)
-    학생/과목/진도 정보는 FK로만 연결한다.
-    """
-    problem_id: UUID = Field(default_factory=uuid4, description="문제 PK")
-    student_id: UUID = Field(description="FK -> student.student_id")
-    curriculum_id: UUID = Field(description="FK -> curriculum.curriculum_id")
-    
-    answer: Optional[str] = Field(default=None, description="학생이 제출한 답변")
-    is_correct: Optional[bool] = Field(default=None, description="정답 여부 (채점 전에는 None)")
-    feedback: Optional[str] = Field(default=None, description="LLM 피드백")
-    
-
 
 
 class WeaknessState(CommonState):
@@ -103,18 +90,13 @@ class WeaknessState(CommonState):
     weakness_keyword: str = Field(description="약점 키워드")
 
 
-class NotificationState(CommonState):
-    """문제 발송 이력 테이블 (notification)"""
-    notification_id: UUID = Field(default_factory=uuid4, description="발송 PK")
-    student_id: UUID = Field(description="FK -> student.student_id")
-    problem_id: UUID = Field(description="FK -> problem.problem_id")
-    channel: Literal["email", "sms", "push"] = Field(default="email", description="발송 채널")
-    status: Literal["pending", "sent", "failed", "opened"] = Field(default="pending", description="발송 상태")
-    sent_at: Optional[datetime] = Field(default=None, description="발송 완료 시각")
-    error_message: Optional[str] = Field(default=None, description="실패 사유")
+class CheckProblemState(BaseModel):
+    """QuestionSpecState의 항목을 비교해 컨셉대로 baseProblemState의 문제를 생성했는지 확인한다."""
+    is_confirm: Optional[bool] = Field(default=None, description="문제 생성후 confirm에서 문제가 컨셉과 적합한지 여부 ")
+    confirm_feedback: str | None = Field(default=None, description="is_confirm이 False일때만 이유를 적음")
 
 
-class QuestionSpecState(BaseModel):
+class QuestionSpecState(CommonState):
     """2단계 LLM(문제 생성기)에게 전달할 문항 설계 명세 State"""
 
     difficulty_level: Literal["매우쉬움", "쉬움", "보통", "어려움", "매우어려움", "최상"] = Field(..., description="난이도등급")
@@ -134,8 +116,18 @@ class QuestionSpecState(BaseModel):
     estimated_solving_time_sec: int = Field(..., ge=0, description="예상_풀이시간_초")
     question_writing_guide: str = Field(..., description="출제_가이드_한줄 - 실제 문제 작성자(2단계 LLM)에게 줄 한 줄 지침")
 
-    subject: Literal["국어", "수학", "영어", "사회", "과학"] = Field(..., description="과목명 (예: 국어, 수학, 영어, 사회, 과학)")
+    subject_str: Literal["국어", "수학", "영어", "사회", "과학"] = Field(..., description="과목명 (예: 국어, 수학, 영어, 사회, 과학)")
     school_level: Literal["초등학교", "중학교", "고등학교"] = Field(..., description="학년 구분 (예: 초등학교, 중학교, 고등학교)")
+    
+    
+
+
+
+class ConfirmProblemState(CommonState):
+    "QuestionSpecState과 BaseProblemState를 합쳐는 state"
+    baseProblemState : BaseProblemState  = Field(description="문제 생성기에서 생성한 문제가 들어있는 객체")
+    questionSpecState: QuestionSpecState = Field(description="LLM(문제 생성기)에게 전달할 문항 설계 명세 State")
+
 
 
 # ---------------------------------------------------------------------------
@@ -151,18 +143,47 @@ class ProblemGenerationState(BaseModel):
     code:str = Field(description="사용자 입력에 해당하는 진도 코드 (예: 4수 (4학년 수학이라는 뜻), 9수 (9학년(중3) 수학이라는 뜻))")
     difficulty: Optional[str] = Field(default="보통", description="사용자가 선택한 난이도 (예: 최상,매우어려움, 어려움, 보통, 쉽게, 매우쉽게)")
 
+    #step1
     student: StudentState | None = Field(default=None, description="조회된 학생 정보")
+    #step2
+    curriculum: list[CurriculumState] | None = Field(default_factory=list, description="조회된 진도 정보")
     subject: SubjectState | None = Field(default=None, description="조회된 과목 정보")
     term: TermState | None = Field(default=None, description="조회된 학년/학기 정보")
-    curriculum: list[CurriculumState] | None = Field(default_factory=list, description="조회된 진도 정보")
+    #step3
+    history_problems: list[BaseProblemState] | None = Field(default_factory=list, description="이 학생의 기존 문제 풀이 이력 (문제 난이도/유형 결정에 활용)")
+    #step4
     weaknesses: list[WeaknessState] | None= Field(default_factory=list, description="이 학생의 기존 약점 목록 (문제 난이도/유형 결정에 활용)")
 
-    history_problems: list[ProblemState] | None = Field(default_factory=list, description="이 학생의 기존 문제 풀이 이력 (문제 난이도/유형 결정에 활용)")
-    generated_problem: Optional[ProblemState] = Field(default=None, description="LLM이 생성한 문제 결과")
-    notification: Optional[NotificationState] = Field(default=None, description="발송 결과")
+    #step5
+    check_problemState : CheckProblemState | None = Field(default=None, description="CheckProblemState 의 객채")
+    generated_problem: Optional[BaseProblemState] = Field(default=None, description="LLM이 생성한 문제 결과")
 
+    #notification: Optional[NotificationState] = Field(default=None, description="발송 결과")
+    retry_cnt: int = Field(description="문제가 적합하지않아서 실패했을시 문제를 다시 만든 시도횟수", default=0)
     error: Optional[str] = Field(default=None, description="파이프라인 중 발생한 에러 메시지")
 
 
 
 
+# class ProblemState(BaseProblemState):
+#     """생성된 문제 및 채점 결과 테이블 (problem)
+#     학생/과목/진도 정보는 FK로만 연결한다.
+#     """
+#     problem_id: UUID = Field(default_factory=uuid4, description="문제 PK")
+#     student_id: UUID = Field(description="FK -> student.student_id")
+#     curriculum_id: UUID = Field(description="FK -> curriculum.curriculum_id")
+    
+    #answer: Optional[str] = Field(default=None, description="학생이 제출한 답변")
+    #is_correct: Optional[bool] = Field(default=None, description="정답 여부 (채점 전에는 None)")
+    #feedback: Optional[str] = Field(default=None, description="LLM 피드백")
+
+
+# class NotificationState(CommonState):
+#     """문제 발송 이력 테이블 (notification)"""
+#     notification_id: UUID = Field(default_factory=uuid4, description="발송 PK")
+#     student_id: UUID = Field(description="FK -> student.student_id")
+#     problem_id: UUID = Field(description="FK -> problem.problem_id")
+#     channel: Literal["email", "sms", "push"] = Field(default="email", description="발송 채널")
+#     status: Literal["pending", "sent", "failed", "opened"] = Field(default="pending", description="발송 상태")
+#     sent_at: Optional[datetime] = Field(default=None, description="발송 완료 시각")
+#     error_message: Optional[str] = Field(default=None, description="실패 사유")
