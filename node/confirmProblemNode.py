@@ -72,9 +72,9 @@ def confirmProblemNode(confirmState:ConfirmProblemState) -> dict:
         HumanMessage(content=human_prompt)
     ]
 
-    #print(system_prompt)
-    #print("==========================================")
-    #print(human_prompt)
+    # print(system_prompt)
+    # print("==========================================")
+    # print(human_prompt)
 
     llm = get_llm()
     structed_llm = llm.with_structured_output(CheckProblemState)
@@ -83,7 +83,7 @@ def confirmProblemNode(confirmState:ConfirmProblemState) -> dict:
     #print(result)
     if not result.is_confirm:
         return {
-                "retry_cnt": spec.retry_cnt + 1,
+                "retry_cnt": 1,
                 "check_problemState": result
         }
     else:

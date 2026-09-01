@@ -120,6 +120,7 @@ class QuestionSpecState(CommonState):
     school_level: Literal["초등학교", "중학교", "고등학교"] = Field(..., description="학년 구분 (예: 초등학교, 중학교, 고등학교)")
     
     
+    
 
 
 
@@ -161,6 +162,8 @@ class ProblemGenerationState(BaseModel):
     #notification: Optional[NotificationState] = Field(default=None, description="발송 결과")
     retry_cnt: int = Field(description="문제가 적합하지않아서 실패했을시 문제를 다시 만든 시도횟수", default=0)
     error: Optional[str] = Field(default=None, description="파이프라인 중 발생한 에러 메시지")
+    p_id: UUID | None = Field(description="문제가 생성된후의 problem_id 값", default=None)
+    
 
 
 

@@ -1,16 +1,20 @@
 import json
 
 from langgraph.graph import END, START, StateGraph
+
+from node.LoadStudentNode import loadStudent_node
 from node.LoadCurriculumNode import curriculum_node
 from node.LoadHistoryNode import loadhistory_node
-from node.SelectConceptNode import selectconcept_node
 from node.WeaknessNode import weakness_node
+from node.SelectConceptNode import selectconcept_node
+from node.makeProblemsNode import makeproblems_node
 from node.confirmProblemNode import confirmProblemNode
 from node.insertDBNode import insertDBNode
-from node.makeProblemsNode import makeproblems_node
+from node.sendProblems import sendProblems 
+
 from router.router import router
 from schema.schema import ProblemGenerationState
-from node.LoadStudentNode import loadStudent_node
+
 
 
 
@@ -24,6 +28,7 @@ builder.add_node('select_concept', selectconcept_node)
 builder.add_node('make_problems', makeproblems_node)  # 문제 생성기(LLM)에게 문제를 생성하도록 요청
 builder.add_node('confirm_problems', confirmProblemNode)
 builder.add_node('insert_db', insertDBNode)
+builder.add_node("send_problems", sendProblems);
 
 builder.add_edge(START, 'student')
 builder.add_edge('student', 'curriculum')
@@ -38,7 +43,8 @@ builder.add_conditional_edges('confirm_problems', router,{
     "END"           : END
 })
 
-builder.add_edge('insert_db', END)
+builder.add_edge('insert_db', "send_problems")
+builder.add_edge('send_problems', END)
 
 
 

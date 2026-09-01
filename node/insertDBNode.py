@@ -1,4 +1,4 @@
-
+import uuid
 
 from db.session import get_db
 from schema.schema import ProblemGenerationState
@@ -12,4 +12,6 @@ def insertDBNode(state: ProblemGenerationState) -> dict:
     # with get_db() as db:
     #     pass
     
-    return {}
+    return {
+        "p_id":  uuid.uuid4()
+    }
