@@ -25,6 +25,6 @@ def sendProblems(state: ProblemGenerationState) -> dict:
         },
     }
     response = requests.post(url, json=payload, timeout=10)
-    print(response)
+    #print(response)
     response.raise_for_status()  # 4xx/5xx 응답이면 예외 발생
     return response.json()

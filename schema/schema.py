@@ -76,7 +76,7 @@ class CurriculumState(CommonState):
 class BaseProblemState(CommonState):
     """문제 생성기(LLM)에게 전달할 문제 설계 명세 State"""
     problem: str = Field(description="LLM이 생성한 문제")
-    correct_answer: str = Field(description="LLM이 생성한 정답")
+    correct_answer: str|None = Field(default=None,description="LLM이 생성한 정답")
     problem_hint: str = Field(description="LLM이 생성한 문제의 풀이 과정에대한 가이드")
     problem_key_concepts: Optional[str] = Field(..., description="LLM이 생성한 문제의 핵심 개념 키워드 (문제의 풀때 필요한 핵심 개념을 최대 10개 이하 정도 쉼표로 구분하여 작성)")
 

@@ -133,6 +133,8 @@ class Problem(Base, TimestampMixin):
         PGUUID(as_uuid=True), ForeignKey("curriculum.curriculum_id", ondelete="RESTRICT"), nullable=False
     )
     problem: Mapped[str] = mapped_column(Text, nullable=False)
+    problem_hint: Mapped[Optional[str]] = mapped_column(Text, default=None, nullable=True)
+    problem_key_concepts: Mapped[Optional[str]] = mapped_column(Text, default=None, nullable=True)
     answer: Mapped[Optional[str]] = mapped_column(Text, default=None, nullable=True)
     is_correct: Mapped[Optional[bool]] = mapped_column(default=None, nullable=True)
     feedback: Mapped[Optional[str]] = mapped_column(Text, default=None, nullable=True)

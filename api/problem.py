@@ -2,8 +2,9 @@ from fastapi import FastAPI, Request, Form
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
-import uuid
 from fastapi.templating import Jinja2Templates
+from api.getproblems import getProblems
+
 
 app = FastAPI()
 
@@ -12,8 +13,8 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 templates = Jinja2Templates(directory="templates")
 
 # 임시 저장소 (실서비스는 DB 사용 권장)
-problems = {}
-answers = {}
+# problems = {}
+# answers = {}
 
 # @app.post("/create_problem")
 # def create_problem(question_text: str):
@@ -23,19 +24,24 @@ answers = {}
 
 @app.get("/problem/{pid}", response_class=HTMLResponse)
 def show_problem(request: Request, pid: str):
+
+    problems = getProblems(pid)
+
+    if not problems:
+        raise ValueError(f"Problem {pid} not found")
+    
     #question = problems.get(pid, "문제를 찾을 수 없습니다.")
 
-        return templates.TemplateResponse(
-        request=request,
-        name="problem.html",
-        context={
-            "pid": pid,
-            "title": "마을 축제 수학 문제",
-            "problems": [
-                {"id": "1", "text": "문제1"},
-                {"id": "2", "text": "문제2"},
-            ],
-        },
+    return templates.TemplateResponse(
+    request=request,
+    name="problem.html",
+    context={
+        "pid": pid,
+        "title": "문제풀러고고싱",
+        "problems": [
+            {"id": pid, "text": problems.problem},
+        ],
+    },
     )
 
 # @app.post("/problem/{pid}/submit")
