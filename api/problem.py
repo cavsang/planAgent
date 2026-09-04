@@ -39,7 +39,7 @@ def show_problem(request: Request, pid: str):
         "pid": pid,
         "title": "문제풀러고고싱",
         "problems": [
-            {"id": pid, "text": problems.problem},
+            {"id": pid, "text": problems.problem, "hint":problems.problem_hint, "keyword":problems.problem_key_concepts},
         ],
     },
     )
