@@ -14,13 +14,15 @@ def loadhistory_node(state:ProblemGenerationState) -> dict:
         stmt = (
             select(Problem)
             .where(Problem.student_id == student_id)
-            .order_by(Problem.problem_id)
+            .order_by(Problem.created_at.desc())
         )
-        #print(stmt)
-        results = db.execute(stmt).all()
+        
+        results = db.execute(stmt).scalars().all()
+        
         if results:
             history_problems = []
             for problem in results:
+                #print(problem.problem)
                 history_problems.append({
                     "problem_id": str(problem.problem_id),
                     "student_id": str(problem.student_id),

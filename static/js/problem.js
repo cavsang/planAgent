@@ -12,8 +12,10 @@
 
 (function () {
   const CONFIG = window.QUIZ_CONFIG || {};
+  //alert(CONFIG.agentEndpoint +" , pid: "+CONFIG.pid+" , user: "+CONFIG.user);
   const AGENT_ENDPOINT = CONFIG.agentEndpoint || "https://your-agent-server.example.com/api/grade";
   const PID = CONFIG.pid || "";
+  const user = CONFIG.user || "anonymous";
 
   function initHintToggles() {
     document.querySelectorAll(".hint-toggle").forEach((btn) => {
@@ -71,16 +73,21 @@
       if (resultPanel) resultPanel.style.display = "none";
 
       try {
+
+        const data = JSON.stringify({
+          pid: PID,
+          answers,
+          user: user
+        });
+
+        //alert(data +" , endpoint: "+AGENT_ENDPOINT);
+        
         const response = await fetch(AGENT_ENDPOINT, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            pid: PID,
-            submitted_at: new Date().toISOString(),
-            answers
-          })
+          body: data
         });
-
+        
         if (!response.ok) throw new Error(`서버 응답 오류 (${response.status})`);
 
         const result = await response.json();

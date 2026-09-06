@@ -61,6 +61,10 @@ def selectconcept_node(state: ProblemGenerationState) -> dict:
         SystemMessage(content=system_prompt),
         HumanMessage(content=human_prompt)
     ]
+
+    # print(system_prompt);
+    # print("===============================================");
+    # print(human_prompt);
     
     llm = get_llm()
     structured_llm = llm.with_structured_output(QuestionSpecState)

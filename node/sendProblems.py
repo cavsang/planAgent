@@ -14,13 +14,13 @@ def sendProblems(state: ProblemGenerationState) -> dict:
     "문제를 telegram을 통해서 링크를 보낸다."
     pid = state.p_id
 
-    url = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage"
+    url = f"https://api.telegram.org/bot{state.student.telegram_bot_token}/sendMessage"
     payload = {
-        "chat_id": TELEGRAM_CHAT_ID,
+        "chat_id": state.student.telegram_chat_id,
         "text": f"{state.student.name} 의 {state.subject.subject_name} 문제",
         "reply_markup": {
             "inline_keyboard": [
-                [{"text": "🚀 문제 풀러가기", "url": f"http://127.0.0.1:5000/problem/{pid}"}]
+                [{"text": "🚀 문제 풀러가기", "url": f"http://127.0.0.1:8000/problem/{pid}"}]
             ]
         },
     }

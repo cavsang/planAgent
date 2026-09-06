@@ -33,6 +33,7 @@ from sqlalchemy.dialects.postgresql import UUID as PGUUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from db.base import Base, TimestampMixin
+from utils.utils import EncryptedString
 
 
 class Student(Base, TimestampMixin):
@@ -53,6 +54,10 @@ class Student(Base, TimestampMixin):
     problems: Mapped[list["Problem"]] = relationship(back_populates="student")
     weaknesses: Mapped[list["Weakness"]] = relationship(back_populates="student")
     notifications: Mapped[list["Notification"]] = relationship(back_populates="student")
+
+    # --- 텔레그램 관련 필드 추가 ---
+    telegram_chat_id: Mapped[str | None] = mapped_column(String(50), nullable=True, unique=True)
+    telegram_bot_token: Mapped[str | None] = mapped_column(EncryptedString(500), nullable=True)
 
     @property
     def school_level(self) -> str:
@@ -135,6 +140,7 @@ class Problem(Base, TimestampMixin):
     problem: Mapped[str] = mapped_column(Text, nullable=False)
     problem_hint: Mapped[Optional[str]] = mapped_column(Text, default=None, nullable=True)
     problem_key_concepts: Mapped[Optional[str]] = mapped_column(Text, default=None, nullable=True)
+    correct_answer: Mapped[Optional[str]] = mapped_column(Text, default=None, nullable=True)
     answer: Mapped[Optional[str]] = mapped_column(Text, default=None, nullable=True)
     is_correct: Mapped[Optional[bool]] = mapped_column(default=None, nullable=True)
     feedback: Mapped[Optional[str]] = mapped_column(Text, default=None, nullable=True)

@@ -1,3 +1,5 @@
+from dotenv import load_dotenv
+
 from schema.schema import BaseProblemState, CurriculumState, WeaknessState
 
 
@@ -239,3 +241,36 @@ def build_confirmproblem_system_prompt() -> str:
         """
 
     return CONFIRM_PROBLEM_SYSTEM_PROMPT
+
+
+
+
+
+
+
+# db/types.py
+import os
+from cryptography.fernet import Fernet
+from sqlalchemy.types import TypeDecorator, String
+
+load_dotenv()  # .env 파일에서 환경 변수 로드
+
+_fernet = Fernet(os.environ["ENCRYPTION_KEY"].encode())
+
+
+class EncryptedString(TypeDecorator):
+    """DB에는 암호화된 값 저장, 파이썬 객체에서는 평문으로 다룸"""
+    impl = String
+    cache_ok = True
+
+    def process_bind_param(self, value: str | None, dialect) -> str | None:
+        # 파이썬 -> DB 저장 시 (INSERT/UPDATE)
+        if value is None:
+            return None
+        return _fernet.encrypt(value.encode()).decode()
+
+    def process_result_value(self, value: str | None, dialect) -> str | None:
+        # DB -> 파이썬 조회 시 (SELECT)
+        if value is None:
+            return None
+        return _fernet.decrypt(value.encode()).decode()

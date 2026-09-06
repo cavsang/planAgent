@@ -17,6 +17,8 @@ def loadStudent_node(state:ProblemGenerationState) -> dict:
                     "email": student.email,
                     "gender": student.gender,
                     "grade": student.grade,
+                    "telegram_chat_id": student.telegram_chat_id,
+                    "telegram_bot_token": student.telegram_bot_token,
                     "birth_date": student.birth_date.isoformat(),
                     "created_at": student.created_at.isoformat(),
                     "updated_at": student.updated_at.isoformat(),

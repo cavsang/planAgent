@@ -62,7 +62,8 @@
 <script>
   window.QUIZ_CONFIG = {
     pid: "{{ pid }}",
-    agentEndpoint: "https://your-agent-server.example.com/api/grade"
+    agentEndpoint: "{{ endpoint }}",
+    user:"{{ user }}"
   };
 </script>
 <script src="/static/js/problem.js" defer></script>

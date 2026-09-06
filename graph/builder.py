@@ -52,6 +52,6 @@ builder.add_edge('send_problems', END)
 
 
 executable_builder = builder.compile()
-result= executable_builder.invoke({"user_input": "이하랑", "code": "4수01-14", "difficulty": "매우 어려움"})
+result= executable_builder.invoke({"user_input": "이하랑", "code": "4수01-07", "difficulty": "매우 어려움"})
 #print(json.dumps(result, indent=2, ensure_ascii=False))
 

@@ -34,6 +34,8 @@ class StudentState(CommonState):
     gender: Literal["M", "F"] = Field(description="성별")
     grade: int = Field(ge=1, le=12, description="학년 (1~12, 초/중/고 구분은 계산해서 사용)")
     email: str = Field(description="학생 또는 보호자 수신 이메일")
+    telegram_chat_id:str | None = Field(default=None, description="텔레그램 채팅 ID (bot과 1:1 대화용)")
+    telegram_bot_token:str | None = Field(default=None, description="텔레그램 봇 토큰 (bot과 1:1 대화용, 암호화 저장)")
 
     @property
     def school_level(self) -> Literal["초등학교", "중학교", "고등학교"]:
@@ -76,9 +78,10 @@ class CurriculumState(CommonState):
 class BaseProblemState(CommonState):
     """문제 생성기(LLM)에게 전달할 문제 설계 명세 State"""
     problem: str = Field(description="LLM이 생성한 문제")
-    correct_answer: str|None = Field(default=None,description="LLM이 생성한 정답")
-    problem_hint: str = Field(description="LLM이 생성한 문제의 풀이 과정에대한 가이드")
-    problem_key_concepts: Optional[str] = Field(..., description="LLM이 생성한 문제의 핵심 개념 키워드 (문제의 풀때 필요한 핵심 개념을 최대 10개 이하 정도 쉼표로 구분하여 작성)")
+    is_correct: Optional[bool] = Field(default=None, description="정답 여부 (채점 전에는 None)")
+    correct_answer: str = Field(default="",description="LLM이 생성한 정답")
+    problem_hint: str = Field(default="",description="LLM이 생성한 문제의 풀이 과정에 대한 가이드, 문제가 '어려움' 이상인경우는 반드시 작성하도록 유도")
+    problem_key_concepts: str = Field(default="",description="LLM이 생성한 문제의 핵심 개념 키워드 (문제의 풀때 필요한 핵심 개념을 최대 10개 이하 정도 쉼표로 구분하여 작성)")
 
 
 
