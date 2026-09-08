@@ -20,7 +20,10 @@ def getProblems(p_id:str) -> dict | None:
                 "student_id": str(problem.student_id),
                 "problem": problem.problem,
                 "problem_hint": problem.problem_hint,
-                "problem_key_concepts": problem.problem_key_concepts
+                "problem_key_concepts": problem.problem_key_concepts,
+                "correct_answer": problem.correct_answer,
+                "answer": problem.answer,
+                "status": problem.status
             }
 
 
@@ -45,6 +48,7 @@ def setProblems(p_id:str, answer:str, user:str) -> str :
             problem.answer = answer
             problem.updated_by = user
             problem.updated_at = problem.updated_at
+            problem.status="SUBMITTED"
             #db.add(problem)
             db.commit()
             return "정상처리 되었습니다."

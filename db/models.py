@@ -141,6 +141,7 @@ class Problem(Base, TimestampMixin):
     problem_hint: Mapped[Optional[str]] = mapped_column(Text, default=None, nullable=True)
     problem_key_concepts: Mapped[Optional[str]] = mapped_column(Text, default=None, nullable=True)
     correct_answer: Mapped[Optional[str]] = mapped_column(Text, default=None, nullable=True)
+    status:Mapped[str] = mapped_column(Text, nullable=False)
     answer: Mapped[Optional[str]] = mapped_column(Text, default=None, nullable=True)
     is_correct: Mapped[Optional[bool]] = mapped_column(default=None, nullable=True)
     feedback: Mapped[Optional[str]] = mapped_column(Text, default=None, nullable=True)

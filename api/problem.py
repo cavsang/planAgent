@@ -65,7 +65,7 @@ class SubmitAnswerRequest(BaseModel):
 @app.post("/problem/{pid}/submit")
 async def submit_answer(pid: str, body: SubmitAnswerRequest):
     # answer[pid] = answer
-    print(body)
+    #print(body)
     result = setProblems(pid, body.answers[0]['answer'], body.user)
     # 여기서 채점 에이전트 호출 or DB 저장 가능
     return {"message": result}
