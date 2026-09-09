@@ -1,16 +1,16 @@
 
 from api.getproblems import getProblems
-from schema.schema import answerState
+from schema.answer_schema import answerState
 
 
 def problem_answer(state:answerState) -> dict:
     """문제정보를 불러온다."""
-    p_id = state.problem_id
-
-    problem = getProblems(p_id)
+    problem_id= state.problem_id
+    problem = getProblems(problem_id)
+    #print("problem_answer "+problem)
 
     if not problem:
-        raise ValueError(f"Problem {p_id} not found")
+        raise ValueError(f"Problem {problem_id} not found")
 
     return {
         "problem_id"        : problem['problem_id'],
@@ -19,6 +19,7 @@ def problem_answer(state:answerState) -> dict:
         "problem"           : problem['problem'],
         "correct_answer"    : problem['correct_answer'],
         "answer"            : problem['answer'],
-        "status"            : problem['status'] 
+        "status"            : problem['status'],
+        "problem_key_concepts" : problem['problem_key_concepts']
     }
 

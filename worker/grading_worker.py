@@ -1,30 +1,27 @@
 import asyncio
 import os
 
-from supabase import create_client, Client
+from dotenv import load_dotenv
+from supabase import AsyncClient, acreate_client, create_client, Client
+from graph.answer_builder import answer_executable
 
 #from graph.grading_graph import grading_graph
+
+load_dotenv()
 
 
 SUPABASE_URL = os.environ["SUPABASE_URL"]
 SUPABASE_KEY = os.environ["SUPABASE_KEY"]
 
-supabase: Client = create_client(
-    SUPABASE_URL,
-    SUPABASE_KEY
-)
-
 async def process_answer(answer_id: str):
 
     print(f"[WORKER] 채점 시작: {answer_id}")
-
-    grading_graph = {}
 
     try:
         # 이미 다른 Worker가 처리 중인지 확인하는 등의
         # 방어 로직을 여기에 넣을 수 있음
 
-        result = await grading_graph.ainvoke({
+        result = await answer_executable.ainvoke({
             "problem_id": answer_id
         })
 
@@ -50,9 +47,10 @@ async def process_answer(answer_id: str):
 
 
 def on_answer_updated(payload):
-
-    new_data = payload["record"]
-    old_data = payload.get("old_record", {})
+    #print(f"[DEBUG] RAW PAYLOAD: {payload}")
+    data = payload["data"]
+    new_data = data["record"]
+    old_data = data.get("old_record", {})
 
     old_status = old_data.get("status")
     new_status = new_data.get("status")
@@ -75,7 +73,19 @@ def on_answer_updated(payload):
         )
 
 
+def on_subscribe(status, err):
+    print(f"[WORKER] Realtime 상태: {status}")
+    if err:
+        print(f"[WORKER] Realtime 오류: {err}")
+
 async def main():
+
+    
+    supabase: AsyncClient = await acreate_client(
+        SUPABASE_URL,
+        SUPABASE_KEY
+    )
+
     print("[WORKER] Grading Worker 시작")
     channel = supabase.channel(
         "grading-worker"
@@ -88,7 +98,7 @@ async def main():
         callback=on_answer_updated
     )
 
-    await channel.subscribe()
+    await channel.subscribe(on_subscribe)
     print("[WORKER] Supabase Realtime 연결 완료")
     print("[WORKER] DB 변경을 기다리는 중...")
     # 프로그램이 종료되지 않도록 대기

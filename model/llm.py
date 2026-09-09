@@ -17,6 +17,6 @@ def get_llm() ->  Optional[BaseChatModel]:
         BaseChatModel: Ollama 기반의 Chat 모델 인스턴스
     """
     #model="Gemma4:26b"
-    return ChatOllama(model="Qwen3:14b",base_url="http://localhost:11434",temperature=0.4, top_p=0.8,think=True, verbose=True)
-    #return ChatOpenAI(model="gpt-5-mini", temperature=0)
+    #return ChatOllama(model="Qwen3:14b",base_url="http://localhost:11434",temperature=0.4, top_p=0.8,think=True, verbose=True)
+    return ChatOpenAI(model="gpt-5-mini", temperature=0)
     #return None

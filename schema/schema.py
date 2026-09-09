@@ -1,11 +1,8 @@
 from datetime import date, datetime, timezone
-from typing import List, Literal, NotRequired, Optional
+from typing import List, Literal, Optional
 from uuid import UUID, uuid4
 
 from pydantic import BaseModel, Field
-
-from node.LoadCurriculumNode import curriculum_node
-
 
 def utc_now() -> datetime:
     return datetime.now(timezone.utc)
@@ -173,17 +170,6 @@ class ProblemGenerationState(BaseModel):
 
 
 
-##############답변 plan #######################
-class answerState(BaseModel):
-    """답변이 완료됬을경우 실행하는 state, 주 목적은 답변분석/채점/약점분석 등에 쓰인다."""
-    problem_id:str              = Field(description="문제 테이블(problem)의 키값.")
-    student_id: str|None        = Field(description="FK -> student.student_id", default=None)
-    curriculum_id: str | None   = Field(description="FK -> curriculum.curriculum_id", default=None)
-
-    problem: str | None         = Field(description="LLM이 생성한 문제")    
-    correct_answer: str | None  = Field(default=None,description="LLM이 생성한 정답")
-    answer: str| None  = Field(default=None,description="학생이 대답한 정답")
-    status:str | None = Field(default=None,description="상태값 변화, 순서대로 WATTING, SUBMITTED, GRADING, GRADED 그리고 에러발생시 ERROR 상태 변경이 된다.")
 
 
 

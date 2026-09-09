@@ -18,6 +18,7 @@ def getProblems(p_id:str) -> dict | None:
             return {
                 "problem_id": str(problem.problem_id),
                 "student_id": str(problem.student_id),
+                "curriculum_id": str(problem.curriculum_id),
                 "problem": problem.problem,
                 "problem_hint": problem.problem_hint,
                 "problem_key_concepts": problem.problem_key_concepts,

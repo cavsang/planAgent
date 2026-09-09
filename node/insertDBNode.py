@@ -15,7 +15,7 @@ def insertDBNode(state: ProblemGenerationState) -> dict:
         student_id=state.student.student_id,
         curriculum_id=state.curriculum[0].curriculum_id,
         problem=state.generated_problem.problem,
-        llm_model=llm.model,
+        llm_model=llm.name,
         problem_hint=state.generated_problem.problem_hint,
         problem_key_concepts=state.generated_problem.problem_key_concepts,
         correct_answer=state.generated_problem.correct_answer,
