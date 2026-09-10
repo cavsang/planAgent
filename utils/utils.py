@@ -1,3 +1,5 @@
+import json
+
 from dotenv import load_dotenv
 
 from schema.schema import BaseProblemState, CurriculumState, WeaknessState
@@ -274,3 +276,18 @@ class EncryptedString(TypeDecorator):
         if value is None:
             return None
         return _fernet.decrypt(value.encode()).decode()
+
+
+
+
+
+### problem.py의 show_answer 함수에서 사용.
+def extract_l_values(weaknesses):
+    all_values = []
+    for w in weaknesses:
+        parsed = json.loads(w.weakness_keyword)  # l에 저장된 JSON 문자열을 리스트로 파싱
+        all_values.extend(parsed)
+    return all_values
+
+def to_quoted_string(values):
+    return ", ".join(f'"{v}"' for v in values)

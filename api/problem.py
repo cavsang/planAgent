@@ -4,7 +4,8 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
-from api.getproblems import getProblems, getUsers, setProblems
+from api.getproblems import getProblems, getUsers, getWeakness, setProblems
+from utils.utils import extract_l_values, to_quoted_string
 
 
 app = FastAPI()
@@ -53,6 +54,40 @@ def show_problem(request: Request, pid: str):
         ],
         "user": student['student_name'], 
         "endpoint": "http://localhost:8000/problem/"+pid+"/submit"
+    },
+    )
+
+
+
+@app.get("/answer/{pid}", response_class=HTMLResponse)
+def show_answer(request: Request, pid: str):
+
+    problems = getProblems(pid)
+    #print(problems)
+
+    #student = getUsers(problems['student_id'])
+    # if not problems or not student:
+    #     raise ValueError(f"Problem {pid} not found")
+    
+
+    student_id = problems['student_id']
+    curriculum_id = problems['curriculum_id']
+    weaknesses = getWeakness(student_id, curriculum_id)
+    values = extract_l_values(weaknesses)
+    weaks = to_quoted_string(values)
+
+    return templates.TemplateResponse(
+    request=request,
+    name="result.html",
+    context={
+        "pid": pid,
+        "title": "[채적결과 확인]",
+        "problems": [
+            {
+                "id": pid, "text": problems['problem'], "hint":problems['problem_hint'],"keyword":problems['problem_key_concepts'], 
+                "answer":problems['answer'], "feedback":problems['feedback'],"weaknesses":weaks
+            }
+        ]
     },
     )
 

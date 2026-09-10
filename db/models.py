@@ -162,7 +162,7 @@ class Weakness(Base, TimestampMixin):
     curriculum_id: Mapped[Optional[UUID]] = mapped_column(
         PGUUID(as_uuid=True), ForeignKey("curriculum.curriculum_id", ondelete="SET NULL"), default=None, nullable=True
     )
-    weakness_keyword: Mapped[str] = mapped_column(String(200), nullable=False)
+    weakness_keyword: Mapped[str] = mapped_column(String(400), nullable=False)
 
     student: Mapped["Student"] = relationship(back_populates="weaknesses")
     curriculum: Mapped[Optional["Curriculum"]] = relationship(back_populates="weaknesses")

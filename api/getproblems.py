@@ -1,8 +1,9 @@
-
-
+from datetime import datetime, timezone
 import uuid
 
-from db.models import Problem, Student
+from sqlalchemy import select
+
+from db.models import Problem, Student, Weakness
 from db.session import get_db
 from schema.schema import BaseProblemState, StudentState
 
@@ -24,8 +25,22 @@ def getProblems(p_id:str) -> dict | None:
                 "problem_key_concepts": problem.problem_key_concepts,
                 "correct_answer": problem.correct_answer,
                 "answer": problem.answer,
-                "status": problem.status
+                "status": problem.status,
+                "feedback": problem.feedback,
+                "is_correct": problem.is_correct,
             }
+
+def getWeakness(student_id: str, curriculum_id:str) -> list:
+    with get_db() as db:
+        stmt = (
+            select(Weakness)
+            .where(
+                Weakness.student_id == student_id,
+                Weakness.curriculum_id == curriculum_id,
+            )
+        )
+        result = db.execute(stmt).scalars().all()
+        return list(result)
 
 
 def getUsers(student_id:str) -> dict | None:
@@ -38,7 +53,9 @@ def getUsers(student_id:str) -> dict | None:
         else:
             return {
                 "student_id": str(st.student_id),
-                "student_name": st.name
+                "student_name": st.name,
+                "telegram_chat_id":st.telegram_chat_id,
+                "telegram_bot_token":st.telegram_bot_token
             }
 
 
@@ -48,10 +65,33 @@ def setProblems(p_id:str, answer:str, user:str) -> str :
             problem = db.get(Problem, p_id)
             problem.answer = answer
             problem.updated_by = user
-            problem.updated_at = problem.updated_at
+            problem.updated_at = datetime.now(timezone.utc)
             problem.status="SUBMITTED"
             #db.add(problem)
             db.commit()
             return "정상처리 되었습니다."
+    except Exception as e:
+        return f"문제 저장 중 오류가 발생했습니다: {str(e)}"
+
+
+
+def setAnswer(p_id:str, is_correct:str, feedback:str, weaknesses:str) -> str :
+    try:
+        with get_db() as db:
+            problem = db.get(Problem, p_id)
+            problem.is_correct = is_correct
+            problem.feedback = feedback
+            problem.updated_by = "answerAgent"
+            problem.updated_at = datetime.now(timezone.utc)
+            problem.status="GRADED"
+
+            weak = Weakness(
+                student_id          = problem.student_id,
+                curriculum_id       = problem.curriculum_id,
+                weakness_keyword    =  weaknesses
+            )
+            db.add(weak)
+            db.commit()
+            return "정상처리되었습니다."
     except Exception as e:
         return f"문제 저장 중 오류가 발생했습니다: {str(e)}"

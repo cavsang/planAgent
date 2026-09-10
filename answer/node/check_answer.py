@@ -1,4 +1,6 @@
 
+import json
+
 from langchain.messages import HumanMessage, SystemMessage
 
 
@@ -95,8 +97,20 @@ def check_answer(state: answerState) -> dict:
     ]
 
     result = llm.invoke(messages)
-    print(result)
-    return {}
+    data = json.loads(result.content)
+
+    #print(data["is_correct"])
+    #print(data["feedback"])
+    #print(data["weaknesses"])
+    # 
+
+    weaknesses = data.get("weaknesses","")    
+    
+    return {
+        "is_correct"    : data["is_correct"],
+        "feedback"      : data.get("feedback",""),
+        "weakness_keyword"    : json.dumps(weaknesses, ensure_ascii=False) if weaknesses else "",#JSON 문자열로 변환 (다른 시스템과 주고받을 때, 한글 깨짐 방지)
+    }
 
 
 

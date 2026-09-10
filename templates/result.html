@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{{ title }}</title>
+<link rel="stylesheet" href="/static/css/problem.css">
+<link rel="stylesheet" href="/static/css/result.css">
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>{{ title }}</h1>
+    <p class="result-note">제출한 답안은 수정할 수 없습니다. 피드백과 보완이 필요한 개념을 확인해보세요.</p>
+  </header>
+
+  {% for problem in problems %}
+  <section class="problem" data-pid="{{ problem.id }}">
+    <div class="idx">문제 {{ loop.index }}</div>
+
+    {% if problem.keyword %}
+    <div class="keywords">
+      {% for kw in problem.keyword.split(',') %}
+      <span class="keyword-chip">{{ kw.strip() }}</span>
+      {% endfor %}
+    </div>
+    {% endif %}
+
+    <div class="question">{{ problem.text }}</div>
+
+    <div class="answer-block">
+      <span class="section-label">제출한 답안</span>
+      <div class="answer-readonly">{{ problem.answer }}</div>
+    </div>
+
+    {% if problem.feedback %}
+    <div class="feedback-block">
+      <span class="section-label">📝 피드백</span>
+      <p class="feedback-text">{{ problem.feedback }}</p>
+    </div>
+    {% endif %}
+
+    {% if problem.weaknesses %}
+    <div class="weakness-block">
+      <span class="section-label">보완이 필요한 개념</span>
+      <div class="weakness-list">
+        {% for w in problem.weaknesses.split(',') %}
+        <span class="weakness-chip">{{ w.strip() }}</span>
+        {% endfor %}
+      </div>
+    </div>
+    {% endif %}
+  </section>
+  {% endfor %}
+
+  <div class="footer-bar result">
+    <a class="back-link" href="/">← 목록으로 돌아가기</a>
+  </div>
+</div>
+
+<script src="/static/js/result.js" defer></script>
+</body>
+</html>
