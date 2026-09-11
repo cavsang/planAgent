@@ -79,9 +79,16 @@ def query_name_example(name:str):
         print(stmt) #쿼리가 나옴,(실행계획)
         student = db.execute(stmt).scalar_one_or_none()
         print(student.name if student else "없음")
-        
+
+
+def insert_term(grade:int, term:str):
+    with get_db() as db:
+        term = Term(grade=grade, term=term)
+        db.add(term)
+        db.commit()
 
 
 if __name__ == "__main__":
     #new_student_id = create_example_data()
-    query_name_example("이하랑")
+    #query_name_example("이하랑")
+    insert_term(4, "2학기")

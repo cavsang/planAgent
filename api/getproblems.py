@@ -1,11 +1,7 @@
 from datetime import datetime, timezone
-import uuid
-
 from sqlalchemy import select
-
-from db.models import Problem, Student, Weakness
+from db.models import Curriculum, Problem, Student, Subject, Term, Weakness
 from db.session import get_db
-from schema.schema import BaseProblemState, StudentState
 
 
 def getProblems(p_id:str) -> dict | None:
@@ -93,5 +89,32 @@ def setAnswer(p_id:str, is_correct:str, feedback:str, weaknesses:str) -> str :
             db.add(weak)
             db.commit()
             return "정상처리되었습니다."
+    except Exception as e:
+        return f"답변 저장 중 오류가 발생했습니다: {str(e)}"
+
+
+def getCurriculmnInIds(curriculum_ids: list) -> list[Curriculum]:
+    try:
+        with get_db() as db:
+            stmt = (
+                select(Curriculum)
+                .where(Curriculum.curriculum_id.in_(curriculum_ids))
+            )
+            curricula = db.execute(stmt).scalars().all()
+
+            return [{"curriculum_id": cur.curriculum_id, "code": cur.code} for cur in curricula]
+    except Exception as e:
+        return f"커리큘럼 ids[] 조회중 오류가 발생했습니다: {str(e)}"
+
+
+def getAllCurriculms(subjectId: str, termId: str):
+    try:
+        with get_db() as db:
+            stmt = (
+                select(Curriculum).order_by(Curriculum.code)
+            )
+            results = db.execute(stmt).all()
+
+            return [{"curriculum_id": cur.curriculum_id, "code": cur.code} for cur in curricula]
     except Exception as e:
         return f"문제 저장 중 오류가 발생했습니다: {str(e)}"

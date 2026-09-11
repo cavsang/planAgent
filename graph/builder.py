@@ -21,8 +21,8 @@ from schema.schema import ProblemGenerationState
 builder = StateGraph(ProblemGenerationState)
 
 builder.add_node('student', loadStudent_node)
-builder.add_node('curriculum', curriculum_node)
 builder.add_node('history', loadhistory_node)
+builder.add_node('curriculum', curriculum_node)
 builder.add_node('weakness', weakness_node)
 builder.add_node('select_concept', selectconcept_node)  
 builder.add_node('make_problems', makeproblems_node)  # 문제 생성기(LLM)에게 문제를 생성하도록 요청
@@ -31,9 +31,9 @@ builder.add_node('insert_db', insertDBNode)
 builder.add_node("send_problems", sendProblems);
 
 builder.add_edge(START, 'student')
-builder.add_edge('student', 'curriculum')
-builder.add_edge('curriculum', 'history')
-builder.add_edge('history', 'weakness')
+builder.add_edge('student', 'history')
+builder.add_edge('history', 'curriculum')
+builder.add_edge('curriculum', 'weakness')
 builder.add_edge('weakness', 'select_concept')
 builder.add_edge('select_concept', 'make_problems')
 builder.add_edge('make_problems', 'confirm_problems')
@@ -52,6 +52,6 @@ builder.add_edge('send_problems', END)
 
 
 executable_builder = builder.compile()
-result= executable_builder.invoke({"user_input": "이하랑", "code": "4수01-07", "difficulty": "매우 어려움"})
+result= executable_builder.invoke({"user_input": "이하랑", "code": "4수01-07", "difficulty": "매우 어려움"})##이하랑, 수학
 #print(json.dumps(result, indent=2, ensure_ascii=False))
 
