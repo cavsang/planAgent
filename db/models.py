@@ -89,7 +89,7 @@ class Term(Base, TimestampMixin):
     grade: Mapped[int] = mapped_column(Integer, nullable=False)
     term: Mapped[str] = mapped_column(
         Enum(
-            "1학기", "2학기", "여름방학", "겨울방학",
+            "1학기", "2학기", "여름방학", "겨울방학", "전체",
             name="term_enum", native_enum=False, validate_strings=True,
         ),
         nullable=False,
@@ -141,7 +141,7 @@ class Problem(Base, TimestampMixin):
     problem_hint: Mapped[Optional[str]] = mapped_column(Text, default=None, nullable=True)
     problem_key_concepts: Mapped[Optional[str]] = mapped_column(Text, default=None, nullable=True)
     correct_answer: Mapped[Optional[str]] = mapped_column(Text, default=None, nullable=True)
-    status:Mapped[str] = mapped_column(Text, nullable=False)
+    status:Mapped[str] = mapped_column(Text, nullable=False, default="WAITING", server_default="WAITING")
     answer: Mapped[Optional[str]] = mapped_column(Text, default=None, nullable=True)
     is_correct: Mapped[Optional[bool]] = mapped_column(default=None, nullable=True)
     feedback: Mapped[Optional[str]] = mapped_column(Text, default=None, nullable=True)

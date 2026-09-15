@@ -87,8 +87,23 @@ def insert_term(grade:int, term:str):
         db.add(term)
         db.commit()
 
+def insert_subject(code:str, name:str):
+    with get_db() as db:
+        subject = Subject(subject_code=code, subject_name=name)
+        db.add(subject)
+        db.commit()
 
 if __name__ == "__main__":
     #new_student_id = create_example_data()
     #query_name_example("이하랑")
-    insert_term(4, "2학기")
+    #insert_term(4, "2학기")
+    # insert_subject("KOREAN","국어");
+    # insert_subject("ENGLISH","영어");
+    # insert_subject("SCIENCE","과학");
+    # insert_subject("ETHICS","도덕");
+    # insert_subject("ART","미술");
+    # insert_subject("MUSIO","음악");
+    insert_subject("SOCIETY","사회");
+    
+
+

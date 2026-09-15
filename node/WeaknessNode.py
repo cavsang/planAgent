@@ -10,7 +10,7 @@ from schema.schema import ProblemGenerationState
 def weakness_node(state:ProblemGenerationState) -> dict:
     """학습 약점을 확인한다"""
     student_id = state.student.student_id
-    
+    #print(state)
     with get_db() as db:
         stmt = (
                     select(Weakness)

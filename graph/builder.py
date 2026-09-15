@@ -2,6 +2,7 @@ import json
 
 from langgraph.graph import END, START, StateGraph
 
+from node.makecurrcode import makecurrcode
 from node.LoadStudentNode import loadStudent_node
 from node.LoadCurriculumNode import curriculum_node
 from node.LoadHistoryNode import loadhistory_node
@@ -22,6 +23,7 @@ builder = StateGraph(ProblemGenerationState)
 
 builder.add_node('student', loadStudent_node)
 builder.add_node('history', loadhistory_node)
+builder.add_node('makecurrcode', makecurrcode)
 builder.add_node('curriculum', curriculum_node)
 builder.add_node('weakness', weakness_node)
 builder.add_node('select_concept', selectconcept_node)  
@@ -30,13 +32,15 @@ builder.add_node('confirm_problems', confirmProblemNode)
 builder.add_node('insert_db', insertDBNode)
 builder.add_node("send_problems", sendProblems);
 
-builder.add_edge(START, 'student')
-builder.add_edge('student', 'history')
-builder.add_edge('history', 'curriculum')
-builder.add_edge('curriculum', 'weakness')
-builder.add_edge('weakness', 'select_concept')
-builder.add_edge('select_concept', 'make_problems')
-builder.add_edge('make_problems', 'confirm_problems')
+builder.add_edge(START              , 'student')
+builder.add_edge('student'          , 'history')
+builder.add_edge('history'          , 'makecurrcode')
+builder.add_edge('makecurrcode'     , 'curriculum')
+builder.add_edge('curriculum'       , 'weakness')
+builder.add_edge('weakness'         , 'select_concept')
+builder.add_edge('select_concept'   , 'make_problems')
+builder.add_edge('make_problems'    , 'confirm_problems')
+
 builder.add_conditional_edges('confirm_problems', router,{
     "makeProblems"  : "make_problems",
     "NEXT"          : "insert_db",
@@ -48,10 +52,7 @@ builder.add_edge('send_problems', END)
 
 
 
-
-
-
 executable_builder = builder.compile()
-result= executable_builder.invoke({"user_input": "이하랑", "code": "4수01-07", "difficulty": "매우 어려움"})##이하랑, 수학
+#result= executable_builder.invoke({"user_input": "이하랑", "code": "4수01-07", "difficulty": "매우 어려움"})
+result= executable_builder.invoke({"user_input": "이하랑", "subject_input": "수학", "difficulty": "매우 어려움"})
 #print(json.dumps(result, indent=2, ensure_ascii=False))
-

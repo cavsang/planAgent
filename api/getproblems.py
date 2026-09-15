@@ -93,7 +93,7 @@ def setAnswer(p_id:str, is_correct:str, feedback:str, weaknesses:str) -> str :
         return f"답변 저장 중 오류가 발생했습니다: {str(e)}"
 
 
-def getCurriculmnInIds(curriculum_ids: list) -> list[Curriculum]:
+def getCurriculmnInIds(curriculum_ids: list) -> list[str]:
     try:
         with get_db() as db:
             stmt = (
@@ -102,19 +102,62 @@ def getCurriculmnInIds(curriculum_ids: list) -> list[Curriculum]:
             )
             curricula = db.execute(stmt).scalars().all()
 
-            return [{"curriculum_id": cur.curriculum_id, "code": cur.code} for cur in curricula]
+            #return [{"curriculum_id": cur.curriculum_id, "code": cur.code} for cur in curricula]
+            return [cur.code for cur in curricula]
     except Exception as e:
         return f"커리큘럼 ids[] 조회중 오류가 발생했습니다: {str(e)}"
 
 
-def getAllCurriculms(subjectId: str, termId: str):
+def getAllCurriculmCodes(subjectId: str, termId: str) -> list[str]:
     try:
         with get_db() as db:
             stmt = (
-                select(Curriculum).order_by(Curriculum.code)
+                select(Curriculum).where(
+                    Curriculum.subject_id == subjectId,
+                    Curriculum.term_id == termId
+                )
             )
             results = db.execute(stmt).all()
 
-            return [{"curriculum_id": cur.curriculum_id, "code": cur.code} for cur in curricula]
+            return [cur.code for cur in results]
+            #return [{"curriculum_id": cur.curriculum_id, "code": cur.code} for cur in results]
     except Exception as e:
         return f"문제 저장 중 오류가 발생했습니다: {str(e)}"
+
+def getTermInfo(grade:str) -> dict:
+    try:
+        with get_db() as db:
+            stmt = (
+                select(Term).where(Term.grade == grade)
+            )
+
+            term = db.execute(stmt).scalars().one()
+            return {
+                "term_id": str(term.term_id),
+                "term" : term.term,
+                "grade": term.grade,
+                "msg": "suc"                
+            }
+    except Exception as e:
+        return {
+            "msg" : "과목조회중 에러발생."
+        }
+
+def getSubjectInfo(subject_input:str) -> dict:
+    try:
+        with get_db() as db:
+            stmt = (
+                select(Subject).where(Subject.subject_name == subject_input)
+            )
+
+            subject = db.execute(stmt).scalars().one()
+            return {
+                "subject_id": str(subject.subject_id),
+                "subject_name" : subject.subject_name,
+                "subject_code": subject.subject_code,
+                "msg": "suc"                
+            }
+    except Exception as e:
+        return {
+            "msg" : "과목조회중 에러발생."
+        }

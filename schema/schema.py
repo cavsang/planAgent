@@ -56,7 +56,7 @@ class TermState(CommonState):
     """학년/학기 마스터 테이블 (term)"""
     term_id: UUID = Field(default_factory=uuid4, description="학년/학기 PK")
     grade: int = Field(ge=1, le=12, description="학년")
-    term: Literal["1학기", "2학기", "여름방학", "겨울방학"] = Field(description="학기 구분")
+    term: Literal["1학기", "2학기", "여름방학", "겨울방학", "전체"] = Field(description="학기 구분")
 
 
 class CurriculumState(CommonState):
@@ -81,7 +81,8 @@ class BaseProblemState(CommonState):
     correct_answer: str = Field(default="",description="LLM이 생성한 정답")
     problem_hint: str = Field(default="",description="LLM이 생성한 문제의 풀이 과정에 대한 가이드, 문제가 '어려움' 이상인경우는 반드시 작성하도록 유도")
     problem_key_concepts: str = Field(default="",description="LLM이 생성한 문제의 핵심 개념 키워드 (문제의 풀때 필요한 핵심 개념을 최대 10개 이하 정도 쉼표로 구분하여 작성)")
-    status:str | None = Field(default=None,description="상태값 변화, 순서대로 WATTING, SUBMITTED, GRADING, GRADED 그리고 에러발생시 ERROR 상태 변경이 된다.")
+    status:str = Field(default="WAITING",description="상태값 변화, 순서대로 WAITING, SUBMITTED, GRADING, GRADED 그리고 에러발생시 ERROR 상태 변경이 된다.")
+    curriculum_id: Optional[UUID] = Field(default=None, description="FK -> curriculum.curriculum_id (관련 진도)")
 
 
 
@@ -144,7 +145,8 @@ class ProblemGenerationState(BaseModel):
     student / curriculum 등은 DB에서 조회해온 결과를 그대로 담는다.
     """
     user_input: str = Field(description="사용자 입력 (예: '이하랑')")
-    code:str = Field(description="사용자 입력에 해당하는 진도 코드 (예: 4수 (4학년 수학이라는 뜻), 9수 (9학년(중3) 수학이라는 뜻))")
+    subject_input:str = Field(description="과목 입력 (예: '수학')")
+    code:str|None = Field(default=None, description="사용자 입력에 해당하는 진도 코드 (예: 4수 (4학년 수학이라는 뜻), 9수 (9학년(중3) 수학이라는 뜻))")
     difficulty: Optional[str] = Field(default="보통", description="사용자가 선택한 난이도 (예: 최상,매우어려움, 어려움, 보통, 쉽게, 매우쉽게)")
 
     #step1

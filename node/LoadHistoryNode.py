@@ -1,7 +1,7 @@
 
 from sqlalchemy import select
 
-from db.models import Problem
+from db.models import Curriculum, Problem, Subject, Term
 from db.session import get_db
 from schema.schema import ProblemGenerationState
 
@@ -13,10 +13,17 @@ def loadhistory_node(state:ProblemGenerationState) -> dict:
     with get_db() as db:
         stmt = (
             select(Problem)
-            .where(Problem.student_id == student_id)
+            .join(Curriculum, Problem.curriculum_id == Curriculum.curriculum_id)
+            .join(Subject, Curriculum.subject_id == Subject.subject_id)
+            .join(Term, Curriculum.term_id == Term.term_id)
+            .where(
+                Problem.student_id == student_id,
+                Subject.subject_name == state.subject_input,
+                Term.grade == state.student.grade,
+            )
             .order_by(Problem.created_at.desc())
         )
-        
+
         results = db.execute(stmt).scalars().all()
         
         if results:
