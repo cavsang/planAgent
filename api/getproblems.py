@@ -117,12 +117,36 @@ def getAllCurriculmCodes(subjectId: str, termId: str) -> list[str]:
                     Curriculum.term_id == termId
                 )
             )
-            results = db.execute(stmt).all()
+            results = db.execute(stmt).scalars().all()
 
             return [cur.code for cur in results]
             #return [{"curriculum_id": cur.curriculum_id, "code": cur.code} for cur in results]
     except Exception as e:
         return f"문제 저장 중 오류가 발생했습니다: {str(e)}"
+
+
+
+
+def getSubjectName(curriculum_id: str) -> str:
+    try:
+        with get_db() as db:
+            # stmt = (
+            #     select(Subject)
+            #     .join(Curriculum.subject_id == Subject.subject_id)
+            #     .where(
+            #         Curriculum.curriculum_id == curriculumn_id
+            #     )
+            # )
+            # result = db.execute(stmt).scalars().one()
+            curriculum = db.get(Curriculum, curriculum_id)
+            subject = curriculum.subject  # relationship 활용
+            if(subject):
+                return subject.subject_name
+            return " ? "
+    except Exception as e:
+        return f"과목찾아오는 중 저장 중 오류가 발생했습니다: {str(e)}"
+
+
 
 def getTermInfo(grade:str) -> dict:
     try:

@@ -21,7 +21,7 @@ answer_builder.add_edge("insert_answer", "send_answer")
 answer_builder.add_edge("send_answer", END)
 
 answer_executable = answer_builder.compile()
-result = answer_executable.invoke({
-        "problem_id": "c82aecdf-5f3f-4d6c-9a76-59552c7e299f"
-})
-print(result)
+# result = answer_executable.invoke({
+#         "problem_id": "c82aecdf-5f3f-4d6c-9a76-59552c7e299f"
+# })
+# print(result)

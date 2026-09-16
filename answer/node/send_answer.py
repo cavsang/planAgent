@@ -19,7 +19,7 @@ def send_answer(state:answerState) -> dict:
             "text": f"{student["student_name"]} 의 채점결과",
             "reply_markup": {
                 "inline_keyboard": [
-                    [{"text": " [채점결과] 확인하기", "url": f"http://127.0.0.1:8000/answer/{pid}"}]
+                    [{"text": " [채점결과] 확인하기", "url": f"http://43.203.211.40:8000/answer/{pid}"}]
                 ]
             },
         }

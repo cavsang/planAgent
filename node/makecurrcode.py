@@ -27,23 +27,28 @@ def makecurrcode(state:ProblemGenerationState) -> dict:
     history:list = state.history_problems
     false_history = [h for h in history if h.is_correct == False]
 
+    history_curri_ids = []
     if false_history:
         history_curri_ids = [h.curriculum_id for h in false_history]
 
         if history_curri_ids:
             hist_curr_list = getCurriculmnInIds(history_curri_ids)
 
-    #1. 틀린부분이 있다면, 틀린 code부터.
-    min_code = min(hist_curr_list)
+        #1. 틀린부분이 있다면, 틀린 code부터.
+        min_code = min(hist_curr_list)
 
-    if min_code:
-        return {
-            "code": min_code
-        }
+        if min_code:
+            return {
+                "code": min_code
+            }
 
 
     #2. 틀린부분이 없으면 전체리스트에서 - 해서 제일첫번째꺼
     all_curr_list = getAllCurriculmCodes(subject['subject_id'], term['term_id'])
+
+    # print("subject : ", subject['subject_id'])
+    # print("term : ", term['term_id'])
+    # print("all_curr_list : ", all_curr_list)
 
     if history_curri_ids:
         hist_curr_list = getCurriculmnInIds(history_curri_ids)

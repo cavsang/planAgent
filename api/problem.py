@@ -4,7 +4,7 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
-from api.getproblems import getProblems, getUsers, getWeakness, setProblems
+from api.getproblems import getProblems, getSubjectName, getUsers, getWeakness, setProblems
 from utils.utils import extract_l_values, to_quoted_string
 
 
@@ -39,6 +39,12 @@ def show_problem(request: Request, pid: str):
 
     if not problems or not student:
         raise ValueError(f"Problem {pid} not found")
+
+
+    curriculum_id = problems['curriculum_id']
+    subject_name = getSubjectName(curriculum_id)
+
+
     
     #question = problems.get(pid, "문제를 찾을 수 없습니다.")
 
@@ -48,12 +54,12 @@ def show_problem(request: Request, pid: str):
     name="problem.html",
     context={
         "pid": pid,
-        "title": "문제풀러고고싱",
+        "title": "["+subject_name+" 문제]",
         "problems": [
             {"id": pid, "text": problems['problem'], "hint":problems['problem_hint'],"keyword":problems['problem_key_concepts']},
         ],
         "user": student['student_name'], 
-        "endpoint": "http://localhost:8000/problem/"+pid+"/submit"
+        "endpoint": "http://43.203.211.40:8000/problem/"+pid+"/submit"
     },
     )
 

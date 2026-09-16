@@ -18,6 +18,7 @@ def selectconcept_node(state: ProblemGenerationState) -> dict:
     weaknesses = state.weaknesses
     history_problems = state.history_problems
     difficulty = state.difficulty
+    #print(state.subject)
     subject = state.subject.subject_name  # "국어" | "수학" | "영어" | "사회" | "과학"
     # ※ ProblemGenerationState에 subject 필드가 아직 없다면 추가해주세요.
 

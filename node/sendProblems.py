@@ -20,7 +20,7 @@ def sendProblems(state: ProblemGenerationState) -> dict:
         "text": f"{state.student.name} 의 {state.subject.subject_name} 문제",
         "reply_markup": {
             "inline_keyboard": [
-                [{"text": "🚀 문제 풀러가기", "url": f"http://127.0.0.1:8000/problem/{pid}"}]
+                [{"text": "🚀 문제 풀러가기", "url": f"http://43.203.211.40:8000/problem/{pid}"}]
             ]
         },
     }

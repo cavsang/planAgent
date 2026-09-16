@@ -93,6 +93,14 @@ def insert_subject(code:str, name:str):
         db.add(subject)
         db.commit()
 
+def update_telegram():
+    with get_db() as db:
+        student = db.get(Student, '7dda8bb3-4f14-4c33-afae-92307a285b84')
+        if(student):
+            student.telegram_bot_token='8278016196:AAEOr0lBNVOnTRsgA1CWaJ14bDvJlMDnHaA'
+            student.telegram_chat_id='-5434318271'
+            db.commit()
+
 if __name__ == "__main__":
     #new_student_id = create_example_data()
     #query_name_example("이하랑")
@@ -103,7 +111,8 @@ if __name__ == "__main__":
     # insert_subject("ETHICS","도덕");
     # insert_subject("ART","미술");
     # insert_subject("MUSIO","음악");
-    insert_subject("SOCIETY","사회");
+    #insert_subject("SOCIETY","사회");
+    update_telegram()
     
 
 
