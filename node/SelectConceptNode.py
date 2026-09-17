@@ -3,7 +3,7 @@ import json
 
 from langchain.messages import HumanMessage, SystemMessage
 
-from model.llm import get_llm
+from model.llm import get_Blueprint, get_llm
 from schema.schema import ProblemGenerationState, QuestionSpecState
 from utils.utils import build_system_prompt, format_curriculum_list, format_history_problems, format_weaknesses
 
@@ -67,7 +67,7 @@ def selectconcept_node(state: ProblemGenerationState) -> dict:
     # print("===============================================");
     # print(human_prompt);
     
-    llm = get_llm()
+    llm = get_Blueprint(subject)
     structured_llm = llm.with_structured_output(QuestionSpecState)
     results = structured_llm.invoke(messages)
     #print("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")

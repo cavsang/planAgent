@@ -4,7 +4,8 @@ import json
 from langchain.messages import HumanMessage, SystemMessage
 
 
-from model.llm import get_llm
+from api.getproblems import getSubjectName
+from model.llm import get_llm, get_verification
 from schema.answer_schema import answerState
 
 
@@ -15,9 +16,9 @@ def check_answer(state: answerState) -> dict:
     correct_answer = state.correct_answer
     answer = state.answer
     problem_key_concepts = state.problem_key_concepts
+    sub = getSubjectName(state.curriculum_id)
 
-
-    llm = get_llm()
+    llm = get_verification(sub)
 
     system_message = """
         You are an educational answer evaluator.
@@ -52,7 +53,6 @@ def check_answer(state: answerState) -> dict:
         - Only include concepts for which there is reasonable evidence of weakness.
         - Do not assume a weakness merely because the answer is incorrect.
         - If there is no clear conceptual weakness, return an empty list.
-        - Use the concepts provided in problem_key_concepts whenever possible.
 
         Return ONLY valid JSON.
         Do not include markdown, explanations, or any text outside the JSON.

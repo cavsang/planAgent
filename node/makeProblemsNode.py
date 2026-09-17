@@ -3,7 +3,7 @@
 import json
 
 from langchain.messages import HumanMessage, SystemMessage
-from model.llm import get_llm
+from model.llm import get_Generation, get_llm
 from schema.schema import BaseProblemState, QuestionSpecState
 from utils.utils import build_makeproblems_system_prompt
 
@@ -33,13 +33,13 @@ def makeproblems_node(state: QuestionSpecState) -> dict:
         HumanMessage(content=human_prompt)
     ]
 
-    print("==========================================start")
-    print(system_prompt)
-    print("==========================================")
-    print(human_prompt)
-    print("==========================================end")
+    #print("==========================================start")
+    #print(system_prompt)
+    #print("==========================================")
+    #print(human_prompt)
+    #print("==========================================end")
 
-    llm = get_llm()
+    llm = get_Generation(subject)
     structured_llm = llm.with_structured_output(BaseProblemState)
     result = structured_llm.invoke(messages)
 
