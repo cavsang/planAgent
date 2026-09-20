@@ -26,18 +26,54 @@ def get_Blueprint(type:str) -> Optional[BaseChatModel]:
         return get_llm_o4_mini("medium")
     else:
         return get_llm_5mini(0.2)
+    # if type == "국어" or type == "사회":
+    #     return get_llm_exaone3_5(0.5)
+    # else:
+    #     return get_llm_qwen3(0.1)
 
 def get_Generation(type:str) -> Optional[BaseChatModel]:
-    if type == "수학" or type == "과학":
-        return get_llm_5mini()
+    # if type == "수학" or type == "과학":
+    #     return get_llm_5mini()
+    # else:
+    #     return get_llm_5_5()
+
+    if type == "국어" or type == "사회":
+        return get_llm_exaone3_5(0.2)
+    elif type == "수학" or type == "과학":
+        return get_llm_gpt_oss(0.1)
     else:
-        return get_llm_5_5()
+        return get_llm_qwen3(0.1)
 
 def get_verification(type:str) -> Optional[BaseChatModel]:
-    if type == "수학" or type == "과학":
-        return get_llm_o4_mini()
-    else:
-        return get_llm_5_5(0.1)
+    # if type == "수학" or type == "과학":
+    #     return get_llm_o4_mini()
+    # else:
+    #     return get_llm_5_5(0.1)
+    return get_llm_qwen3_veri(0.1)
+
+
+
+
+
+
+def get_llm_qwen3(temp = 0.1) -> Optional[BaseChatModel]:
+    """영어 에 좋다함"""
+    return ChatOllama(model="Qwen3:14b",base_url="http://localhost:11434",temperature=temp,num_ctx=8192)
+
+def get_llm_qwen3_veri(temp = 0.1) -> Optional[BaseChatModel]:
+    """검증에 적합한 Qwen3 모델"""
+    return ChatOllama(model="Qwen3:14b",base_url="http://localhost:11434",temperature=temp, top_p=0.8, think=True, verbose=True,num_ctx=8192)
+
+def get_llm_exaone3_5(temp = 0.2) -> Optional[BaseChatModel]:
+    """사회/국어 에 좋다함"""
+    return ChatOllama(model="exaone3.5:7.8b",base_url="http://localhost:11434",temperature=temp,num_ctx=8192)
+
+def get_llm_gpt_oss(temp = 0.1) -> Optional[BaseChatModel]:
+    """수학/과학에 좋다함"""
+    return ChatOllama(model="gpt-oss:20b",base_url="http://localhost:11434",temperature=temp,num_ctx=8192)
+
+
+
 
 
 

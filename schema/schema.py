@@ -79,7 +79,7 @@ class BaseProblemState(CommonState):
     problem: str = Field(description="LLM이 생성한 문제")
     is_correct: Optional[bool] = Field(default=None, description="정답 여부 (채점 전에는 None)")
     correct_answer: str = Field(default="",description="LLM이 생성한 정답")
-    problem_hint: str = Field(default="",description="LLM이 생성한 문제의 풀이 과정에 대한 가이드, 문제가 '어려움' 이상인경우는 반드시 작성하도록 유도")
+    problem_hint: str = Field(default="",description="LLM이 생성한 문제의 풀이 과정에 대한 가이드, 문제가 ['보통','어려움', '매우어려움', '최상']인 경우는 반드시 작성하도록 유도")
     problem_key_concepts: str = Field(default="",description="LLM이 생성한 문제의 핵심 개념 키워드 (문제의 풀때 필요한 핵심 개념을 최대 10개 이하 정도 쉼표로 구분하여 작성)")
     status:str = Field(default="WAITING",description="상태값 변화, 순서대로 WAITING, SUBMITTED, GRADING, GRADED 그리고 에러발생시 ERROR 상태 변경이 된다.")
     curriculum_id: Optional[UUID] = Field(default=None, description="FK -> curriculum.curriculum_id (관련 진도)")

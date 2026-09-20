@@ -80,15 +80,15 @@ def confirmProblemNode(confirmState:ConfirmProblemState) -> dict:
         HumanMessage(content=human_prompt)
     ]
 
-    # print(system_prompt)
-    # print("==========================================")
-    # print(human_prompt)
+    #print(system_prompt)
+    #print("==========================================")
+    #print(human_prompt)
 
     llm = get_verification(spec.subject_str)
     structed_llm = llm.with_structured_output(CheckProblemState)
     result = structed_llm.invoke(messages)
 
-    #print(f"[검증결과] : {result}")
+    print(f"[검증결과] : {result}")
     if not result.is_confirm:
         return {
                 "retry_cnt": spec.retry_cnt + 1,
