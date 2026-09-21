@@ -81,12 +81,14 @@ def setAnswer(p_id:str, is_correct:str, feedback:str, weaknesses:str) -> str :
             problem.updated_at = datetime.now(timezone.utc)
             problem.status="GRADED"
 
-            weak = Weakness(
-                student_id          = problem.student_id,
-                curriculum_id       = problem.curriculum_id,
-                weakness_keyword    =  weaknesses
-            )
-            db.add(weak)
+            if weaknesses:
+                weak = Weakness(
+                    student_id          = problem.student_id,
+                    curriculum_id       = problem.curriculum_id,
+                    weakness_keyword    =  weaknesses
+                )
+                db.add(weak)
+                
             db.commit()
             return "정상처리되었습니다."
     except Exception as e:
